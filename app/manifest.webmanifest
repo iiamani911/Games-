@@ -1,0 +1,25 @@
+{
+  "name": "كنز | Kanz — Family Games",
+  "short_name": "Kanz كنز",
+  "description": "Family game platform in Arabic & English: treasure adventure, daily challenge and healthy-eating games.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#071226",
+  "theme_color": "#0b1d3a",
+  "lang": "ar",
+  "dir": "auto",
+  "categories": ["games", "education", "kids", "health"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "تحدي اليوم | Daily Challenge", "url": "./?go=dailyPick" },
+    { "name": "تحدي الوجبات | Snack Attack", "url": "./?go=snackPick" },
+    { "name": "يومياتي الصحية | Food Diary", "url": "./?go=food" }
+  ]
+}

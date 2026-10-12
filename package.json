@@ -1,0 +1,22 @@
+{
+  "name": "kanz-family-games",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kanz | كنز — bilingual (Arabic/English) family game platform. Installable PWA, wrappable as a native app with Capacitor.",
+  "scripts": {
+    "start": "npx --yes http-server app -p 8080 -c-1",
+    "app:add-android": "npx cap add android",
+    "app:add-ios": "npx cap add ios",
+    "app:sync": "npx cap sync",
+    "app:android": "npx cap open android",
+    "app:ios": "npx cap open ios"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/ios": "^6.1.2"
+  }
+}
