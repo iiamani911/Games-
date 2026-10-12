@@ -9,11 +9,11 @@ No servers, no accounts, no external libraries: everything runs and is saved on 
 |---|---|
 | 🗺️ **Treasure Adventure** | 6-stop treasure map (riddles, numbers, words, patterns, knowledge, health). Team or individual mode, per-player difficulty, hints, timer, streak bonuses, animated treasure reveal. |
 | 📅 **Daily Challenge** | 6 new questions every day — the same for everyone on the same day — with a shareable 🟩🟨🟥 result grid and day streaks. |
-| 🍔🥦 **Snack Attack** | 45-second arcade: eat the healthy food, skip the junk. Junk drains your energy 🔋. |
-| 🥗 **My Food Diary** | Log what you really ate today. Healthy picks get cheers; junk gets a playful “disappointed” reaction. Healthy-day bonus coins. |
+| 🍔🥦 **Snack Attack** | 45-second arcade: eat nutritious foods to charge your super power ⚡ (bonus every 5). Treats still score points — no penalties. |
+| 🥗 **My Food Diary** | Log what you ate today. Nutritious picks earn stars ⭐ toward a daily goal and bonus coins; treats are logged with friendly, neutral reactions. |
 | 🏆 **Hall of Heroes** | XP levels, titles, 11 badges, coins, and an avatar shop. |
 
-Spoken encouragement uses the device's built-in speech (Web Speech API) in Arabic or English, with a speech bubble as a fallback when the device has no voice for that language. Sound effects are synthesized (Web Audio) — no audio files.
+Spoken encouragement (always positive — never negative about food) uses the device's built-in speech (Web Speech API) in Arabic or English, with a speech bubble as a fallback when the device has no voice for that language. Sound effects are synthesized (Web Audio) — no audio files.
 
 ## Run it
 

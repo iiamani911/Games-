@@ -194,23 +194,23 @@ B('knowledge','hard',['ما عاصمة أستراليا؟','كانبرا',['سي
 B('knowledge','hard',['من العالِم الذي يُعدّ رائد علم البصريات ومؤلف «كتاب المناظر»؟','ابن الهيثم',['ابن رشد','جابر بن حيان','الرازي'],'شرح كيف نرى الأشياء بانعكاس الضوء.'],['Which scientist pioneered optics and wrote the “Book of Optics”?','Ibn al-Haytham',['Ibn Rushd','Jabir ibn Hayyan','Al-Razi'],'He explained how we see using light.']);
 
 /* ===== Health & nutrition (both) ===== */
-B('health','easy',['أي وجبة خفيفة هي الأكثر فائدة لجسمك؟','تفاحة',['رقائق البطاطس','حلوى','مشروب غازي'],'تنمو على الشجر.','التفاح غني بالألياف والفيتامينات.'],['Which snack is the healthiest?','An apple',['Potato chips','Candy','Soda'],'It grows on trees.','Apples are full of fiber and vitamins.']);
-B('health','easy',['ما أفضل مشروب عندما تشعر بالعطش؟','الماء',['مشروب غازي','مشروب طاقة','عصير مُحلّى'],'لا يحتوي على سكر.','الماء يروي العطش بلا سكر ولا سعرات.'],['What’s the best drink when you’re thirsty?','Water',['Soda','Energy drink','Sweetened juice'],'It has zero sugar.','Water hydrates you with no sugar or calories.']);
+B('health','easy',['أي من هذه فاكهة؟','الفراولة',['الجزر','البروكلي','البطاطس'],'حمراء وصغيرة وفيها بذور من الخارج!'],['Which of these is a fruit?','Strawberry',['Carrot','Broccoli','Potato'],'Small, red, with seeds on the outside!']);
+B('health','easy',['ما الذي يشكّل أكثر من نصف وزن جسمك؟','الماء',['الهواء','الشعر','الأظافر'],'نشربه كل يوم.','أكثر من نصف جسمك ماء، لذلك نشرب منه كثيراً.'],['What makes up more than half of your body weight?','Water',['Air','Hair','Nails'],'You drink it every day.','More than half of your body is water!']);
 B('health','easy',['كم مرة يجب أن تنظّف أسنانك يومياً على الأقل؟','مرتين',['ولا مرة','مرة كل أسبوع','عشر مرات'],'صباحاً وقبل النوم.'],['How many times a day should you brush your teeth (at least)?','Twice',['Never','Once a week','Ten times'],'Morning and before bed.']);
-B('health','easy',['أي طعام يساعد على بناء عظام قوية؟','الحليب',['الحلوى','رقائق البطاطس','المشروبات الغازية'],'غني بالكالسيوم.'],['Which food helps build strong bones?','Milk',['Candy','Chips','Soda'],'It’s full of calcium.']);
+B('health','easy',['أي طعام غني بالكالسيوم الذي يبني عظاماً قوية؟','الحليب',['الأرز','التفاح','الخيار'],'لونه أبيض.'],['Which food is rich in calcium for strong bones?','Milk',['Rice','Apple','Cucumber'],'It’s white.']);
 B('health','easy',['أي من هذه من الخضراوات؟','البروكلي',['الموز','التفاح','العنب'],'يشبه شجرة صغيرة!'],['Which of these is a vegetable?','Broccoli',['Banana','Apple','Grapes'],'It looks like a tiny tree!']);
 B('health','easy',['الجزر مفيد بشكل خاص لـ…','العينين',['الأظافر','الأذنين','لون الشعر'],'يحتوي على فيتامين أ.'],['Carrots are especially good for your…','Eyes',['Nails','Ears','Hair color'],'They contain vitamin A.']);
 B('health','medium',['أي فيتامين يصنعه جسمك عند التعرض لأشعة الشمس؟','فيتامين د',['فيتامين ج','فيتامين أ','فيتامين ب12'],'مهم للعظام.'],['Which vitamin does your body make from sunlight?','Vitamin D',['Vitamin C','Vitamin A','Vitamin B12'],'Important for bones.']);
 B('health','medium',['البرتقال مشهور بأنه غني بـ…','فيتامين ج',['فيتامين د','الحديد','الكافيين'],'يقوّي المناعة.'],['Oranges are famous for being rich in…','Vitamin C',['Vitamin D','Iron','Caffeine'],'It helps your immune system.']);
 B('health','medium',['كم ساعة نوم يحتاجها الأطفال (6-12 سنة) تقريباً كل ليلة؟','من 9 إلى 12 ساعة',['من 4 إلى 5 ساعات','6 ساعات فقط','أكثر من 15 ساعة'],'أكثر مما يحتاجه الكبار.'],['About how much sleep do kids aged 6–12 need each night?','9–12 hours',['4–5 hours','Only 6 hours','More than 15 hours'],'More than adults need.']);
-B('health','medium',['ما العنصر الغذائي الأهم لبناء العضلات؟','البروتين',['السكر','الملح','الكافيين'],'تجده في البيض والسمك والبقوليات.'],['Which nutrient is most important for building muscles?','Protein',['Sugar','Salt','Caffeine'],'Eggs, fish and beans have lots of it.']);
-B('health','medium',['كثرة السكر تضرّ بشكل خاص…','الأسنان',['الشعر','الرموش','الأظافر'],'تسبب التسوّس.'],['Too much sugar is especially bad for your…','Teeth',['Hair','Eyelashes','Nails'],'It causes cavities.']);
-B('health','medium',['كم يجب أن تشغل الخضار والفواكه من طبقك؟','النصف',['لا شيء','قطعة صغيرة فقط','الطبق كله حلويات'],'قاعدة «الطبق الصحي».'],['How much of your plate should be fruits and vegetables?','Half',['None','Just a tiny bit','All dessert'],'The “healthy plate” rule.']);
+B('health','medium',['ما العنصر الغذائي الأهم لبناء العضلات؟','البروتين',['فيتامين ج','الألياف','الماء'],'تجده في البيض والسمك والبقوليات.'],['Which nutrient is most important for building muscles?','Protein',['Vitamin C','Fiber','Water'],'Eggs, fish and beans have lots of it.']);
+B('health','medium',['ماذا نسمي الطاقة التي نحصل عليها من الطعام؟','السعرات الحرارية',['الكيلومترات','اللترات','الدرجات'],'نقرأها على عبوات الطعام.'],['What do we call the energy we get from food?','Calories',['Kilometres','Litres','Degrees'],'You can read it on food labels.']);
+B('health','medium',['كم يجب أن تشغل الخضار والفواكه من طبقك؟','النصف',['الربع','الثلث','لا شيء'],'قاعدة «الطبق الصحي».'],['How much of your plate should be fruits and vegetables?','Half',['A quarter','A third','None'],'The “healthy plate” rule.']);
 B('health','hard',['أي معدن موجود في السبانخ واللحوم يساعد الدم على نقل الأكسجين؟','الحديد',['الكالسيوم','الصوديوم','الزنك'],'نقصه يسبب فقر الدم.'],['Which mineral in spinach and red meat helps blood carry oxygen?','Iron',['Calcium','Sodium','Zinc'],'Too little causes anemia.']);
 B('health','hard',['كم دقيقة على الأقل يُنصح أن يتحرك الأطفال وينشطوا يومياً؟','60 دقيقة',['10 دقائق','ساعة في الأسبوع','5 ساعات متواصلة'],'ساعة كاملة.'],['At least how long should kids be active every day?','60 minutes',['10 minutes','1 hour a week','5 hours non-stop'],'A full hour.']);
 B('health','hard',['بماذا تساعد «الألياف» الموجودة في الخضار والحبوب؟','الهضم',['النظر','نمو الشعر','السمع'],'تعمل مثل مكنسة للأمعاء.'],['What does fiber (in veggies and grains) help with?','Digestion',['Eyesight','Hair growth','Hearing'],'Like a broom for your tummy.']);
-B('health','hard',['أي من هذه حبوب كاملة؟','الشوفان',['الخبز الأبيض','الدونات','البسكويت'],'يؤكل غالباً في الفطور.'],['Which of these is a whole grain?','Oats',['White bread','Donuts','Cookies'],'Often eaten for breakfast.']);
-B('health','hard',['علبة مشروب غازي واحدة قد تحتوي تقريباً على كم ملعقة صغيرة من السكر؟','نحو 9 ملاعق',['ولا ملعقة','ملعقة واحدة','نصف ملعقة'],'أكثر مما تتخيّل!'],['Roughly how many teaspoons of sugar can one can of soda contain?','About 9',['Zero','One','Half a teaspoon'],'More than you think!']);
+B('health','hard',['أي من هذه من الحبوب الكاملة؟','الشوفان',['التفاح','الحليب','البيض'],'يؤكل غالباً في الفطور.'],['Which of these is a whole grain?','Oats',['Apple','Milk','Eggs'],'Often eaten for breakfast.']);
+B('health','hard',['أي فاكهة تحتوي على أكبر نسبة من الماء؟','البطيخ',['الموز','الأفوكادو','التمر'],'اسمها يكاد يقول «ماء»!','البطيخ أكثر من 90% منه ماء.'],['Which fruit contains the most water?','Watermelon',['Banana','Avocado','Dates'],'Its name almost says it!','Watermelon is over 90% water.']);
 
 /* ===== Hand-written number teasers (both) ===== */
 B('number','easy',['كم يوماً في 3 أسابيع؟','21',['18','24','14'],'في الأسبوع 7 أيام.','3 × 7 = 21'],['How many days are in 3 weeks?','21',['18','24','14'],'A week has 7 days.','3 × 7 = 21']);
@@ -263,19 +263,19 @@ const FOODS = [
   { id:'oats', e:'🥣', ok:true, ar:'شوفان', en:'Oatmeal', far:'الشوفان فطور يعطي طاقة طويلة.', fen:'Oatmeal gives long-lasting energy.' },
   { id:'tomato', e:'🍅', ok:true, ar:'طماطم', en:'Tomato', far:'الطماطم مفيدة للقلب والبشرة.', fen:'Tomatoes are good for heart and skin.' },
   { id:'avocado', e:'🥑', ok:true, ar:'أفوكادو', en:'Avocado', far:'الأفوكادو فيه دهون صحية.', fen:'Avocados have healthy fats.' },
-  { id:'fries', e:'🍟', ok:false, ar:'بطاطس مقلية', en:'French fries', far:'المقليات مليئة بالزيت والملح.', fen:'Fries are full of oil and salt.' },
-  { id:'burger', e:'🍔', ok:false, ar:'برغر وجبات سريعة', en:'Fast-food burger', far:'الوجبات السريعة فيها دهون كثيرة.', fen:'Fast food is loaded with fat.' },
-  { id:'donut', e:'🍩', ok:false, ar:'دونات', en:'Donut', far:'الدونات سكر ودهون بلا فائدة تُذكر.', fen:'Donuts are sugar + fat with little benefit.' },
-  { id:'candy', e:'🍬', ok:false, ar:'حلوى', en:'Candy', far:'الحلوى تسبب تسوّس الأسنان.', fen:'Candy causes tooth cavities.' },
-  { id:'lollipop', e:'🍭', ok:false, ar:'مصّاصة', en:'Lollipop', far:'المصّاصة سكر خالص يلتصق بالأسنان.', fen:'Lollipops are pure sugar on your teeth.' },
-  { id:'soda', e:'🥤', ok:false, ar:'مشروب غازي', en:'Soda', far:'العلبة الواحدة قد تحتوي نحو 9 ملاعق سكر!', fen:'One can may have about 9 teaspoons of sugar!' },
-  { id:'chocolate', e:'🍫', ok:false, ar:'لوح شوكولاتة', en:'Chocolate bar', far:'الشوكولاتة الكثيرة سكر ودهون.', fen:'Lots of chocolate = lots of sugar and fat.' },
-  { id:'cake', e:'🍰', ok:false, ar:'كيك', en:'Cake', far:'الكيك للمناسبات وليس كل يوم.', fen:'Cake is for celebrations, not every day.' },
-  { id:'hotdog', e:'🌭', ok:false, ar:'هوت دوغ', en:'Hot dog', far:'اللحوم المصنّعة مليئة بالملح والمواد الحافظة.', fen:'Processed meat is full of salt and preservatives.' },
-  { id:'cookie', e:'🍪', ok:false, ar:'بسكويت محلّى', en:'Cookies', far:'البسكويت المحلّى سكر مخفي.', fen:'Cookies hide lots of sugar.' },
-  { id:'icecream', e:'🍦', ok:false, ar:'آيس كريم', en:'Ice cream', far:'الآيس كريم لذيذ لكن سكره كثير.', fen:'Ice cream is yummy but very sugary.' },
-  { id:'pizza', e:'🍕', ok:false, ar:'بيتزا جاهزة', en:'Fast-food pizza', far:'البيتزا الجاهزة دهون وملح كثير.', fen:'Fast-food pizza is heavy on fat and salt.' },
-  { id:'cupcake', e:'🧁', ok:false, ar:'كب كيك', en:'Cupcake', far:'الكب كيك مليء بالسكر والكريمة.', fen:'Cupcakes are full of sugar and frosting.' }
+  { id:'fries', e:'🍟', ok:false, ar:'بطاطس مقلية', en:'French fries', far:'بطاطس مقرمشة ذهبية اللون.', fen:'Crispy golden potatoes.' },
+  { id:'burger', e:'🍔', ok:false, ar:'برغر', en:'Burger', far:'شطيرة مشهورة في كل العالم.', fen:'A sandwich famous all over the world.' },
+  { id:'donut', e:'🍩', ok:false, ar:'دونات', en:'Donut', far:'حلوى مستديرة بفتحة في الوسط.', fen:'A round treat with a hole in the middle.' },
+  { id:'candy', e:'🍬', ok:false, ar:'حلوى', en:'Candy', far:'حلوى ملوّنة بنكهات كثيرة.', fen:'Colorful sweets in lots of flavors.' },
+  { id:'lollipop', e:'🍭', ok:false, ar:'مصّاصة', en:'Lollipop', far:'حلوى على عصا!', fen:'A sweet on a stick!' },
+  { id:'soda', e:'🥤', ok:false, ar:'مشروب غازي', en:'Soda', far:'مشروب فوّار مليء بالفقاعات.', fen:'A fizzy, bubbly drink.' },
+  { id:'chocolate', e:'🍫', ok:false, ar:'لوح شوكولاتة', en:'Chocolate bar', far:'تُصنع الشوكولاتة من حبوب الكاكاو.', fen:'Chocolate is made from cocoa beans.' },
+  { id:'cake', e:'🍰', ok:false, ar:'كيك', en:'Cake', far:'الكيك نجم حفلات أعياد الميلاد.', fen:'Cake is the star of birthday parties.' },
+  { id:'hotdog', e:'🌭', ok:false, ar:'هوت دوغ', en:'Hot dog', far:'شطيرة طويلة اشتهرت في الملاعب.', fen:'A long sandwich famous at stadiums.' },
+  { id:'cookie', e:'🍪', ok:false, ar:'بسكويت', en:'Cookies', far:'بسكويت مخبوز ومقرمش.', fen:'Crunchy baked cookies.' },
+  { id:'icecream', e:'🍦', ok:false, ar:'آيس كريم', en:'Ice cream', far:'حلوى باردة لأيام الصيف.', fen:'A cold treat for summer days.' },
+  { id:'pizza', e:'🍕', ok:false, ar:'بيتزا', en:'Pizza', far:'أصل البيتزا من إيطاليا.', fen:'Pizza comes from Italy.' },
+  { id:'cupcake', e:'🧁', ok:false, ar:'كب كيك', en:'Cupcake', far:'كعكة صغيرة بحجم كفّ اليد.', fen:'A little cake the size of your hand.' }
 ];
 
 /* ---------------- Voice phrases ---------------- */
@@ -289,16 +289,13 @@ const PHRASES = {
     en:['No worries, you’ve got the next one!','So close! Keep going!','Every hero misses sometimes!','Nice try! The adventure continues!']
   },
   streak:{ ar:['سلسلة نارية!','لا أحد يوقفكم!','نار نار نار!'], en:['You’re on fire!','Nobody can stop you!','Hat trick!'] },
-  unhealthy:{
-    ar:['أوه لا… جسمك يستحق أفضل من هذا!','آه! السكر الكثير يُحزن أسنانك!','يا خسارة! الطاقة نزلت!','همم… ماذا عن فاكهة بدلاً منه؟','معدتك تقول: لا، أرجوك!','خيبة أمل صغيرة… الوجبات السريعة مرة أخرى؟'],
-    en:['Oh no… your body deserves better!','Uh-oh, sugar overload!','Nooo, your energy just dropped!','Hmm… how about a fruit next time?','Your tummy says: please, no!','A little disappointing… junk food again?']
-  },
   healthy:{
     ar:['اختيار بطل!','جسمك يشكرك!','طاقة خارقة!','صحتين وعافية!','هذا ما يأكله الأبطال!','قوة ونشاط!'],
     en:['Hero choice!','Your body says thank you!','Power up!','Super healthy!','That’s what champions eat!','Energy boost!']
   },
-  skipHealthy:{ ar:['أوه! هذا كان مفيداً لك!','لا تفوّت الأكل الصحي!'], en:['Oops! That one was good for you!','Don’t skip the good stuff!'] },
-  skipJunk:{ ar:['قرار ذكي!','رفض بطولي!','أحسنت الاختيار، صحتك أولاً!'], en:['Smart move!','Heroic no!','Great call, health first!'] },
+  treat:{ ar:['بالهناء والشفاء!','لذيذ!','وجبة خفيفة لذيذة!','تم! ماذا بعد؟'], en:['Yum, enjoy!','Tasty!','A tasty snack!','Got it! What’s next?'] },
+  next:{ ar:['التالي!','لنرَ الطبق القادم!','هيا للطبق التالي!'], en:['Next one!','Let’s see what’s next!','On to the next plate!'] },
+  boost:{ ar:['قوة خارقة! مكافأة إضافية!','شحنة كاملة! أنت بطل!'], en:['Super power unlocked! Bonus!','Fully charged! You’re a hero!'] },
   levelUp:{ ar:['مستوى جديد! أنتم تكبرون!'], en:['Level up! You’re getting stronger!'] },
   win:{ ar:['مبروك! الكنز لكم!','يا لها من مغامرة! مبروك!'], en:['Congratulations! The treasure is yours!','What an adventure! Well done!'] }
 };

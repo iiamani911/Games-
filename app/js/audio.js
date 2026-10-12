@@ -26,7 +26,6 @@ const Snd = (() => {
     pop(){ tone(500,0,.09,'sine',.1,900); },
     correct(){ [523,659,784,1047].forEach((f,i) => tone(f, i*.08, .25, 'triangle', .12)); },
     wrong(){ tone(330,0,.18,'sawtooth',.05); tone(247,.16,.3,'sawtooth',.05); },
-    sad(){ tone(392,0,.32,'triangle',.1,370); tone(370,.3,.32,'triangle',.1,349); tone(349,.6,.7,'triangle',.1,262); },
     yum(){ tone(660,0,.1,'sine',.1,990); tone(990,.1,.16,'sine',.1,1320); },
     coin(){ tone(988,0,.08,'square',.05); tone(1319,.08,.22,'square',.05); },
     hint(){ tone(880,0,.1,'sine',.08); tone(1175,.09,.16,'sine',.08); },
@@ -51,8 +50,8 @@ const Snd = (() => {
       u.lang = want === 'ar' ? 'ar-SA' : 'en-US';
       const v = voices.find(v => v.lang && v.lang.toLowerCase().startsWith(want) && /female|zira|samantha|google/i.test(v.name)) || voices.find(v => v.lang && v.lang.toLowerCase().startsWith(want));
       if(v) u.voice = v;
-      u.rate = mood === 'sad' ? .9 : 1.02;
-      u.pitch = mood === 'sad' ? .75 : mood === 'happy' ? 1.25 : 1;
+      u.rate = 1.02;
+      u.pitch = mood === 'happy' ? 1.25 : 1;
       speechSynthesis.speak(u);
     }catch(e){}
   }

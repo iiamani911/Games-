@@ -105,7 +105,7 @@ function say(type, mood, prefix){
   const text = rpick(PHRASES[type][L()]);
   const b = $('#bubble');
   b.className = 'bubble show ' + (mood || 'happy');
-  b.querySelector('.face').textContent = mood === 'sad' ? '😢' : mood === 'calm' ? '🙂' : '🤩';
+  b.querySelector('.face').textContent = mood === 'calm' ? '🙂' : '🤩';
   b.querySelector('.txt').textContent = (prefix ? prefix + ' ' : '') + text;
   clearTimeout(bubbleTimer); bubbleTimer = setTimeout(() => b.classList.remove('show'), 2600);
   Snd.speak((prefix ? prefix + ' ' : '') + text, mood);
@@ -203,8 +203,7 @@ SCREENS.home = () => {
   const sel = selectedPlayers();
   const today = dateKey();
   const dailyDone = sel.filter(p => prof(p.id).daily.hist[today]).length;
-  const foodScores = sel.map(p => foodScore(p.id)).filter(x => x.score != null);
-  const famHealth = foodScores.length ? Math.round(foodScores.reduce((a,b) => a + b.score, 0) / foodScores.length) : null;
+  const famStars = sel.reduce((n,p) => n + foodScore(p.id).h, 0);
   const top = [...S.players].sort((a,b) => prof(b.id).xp - prof(a.id).xp)[0];
   const installable = !isStandalone();
   return `
@@ -240,7 +239,7 @@ SCREENS.home = () => {
     </button>
     <button class="tile tile-food" data-act="food">
       <span class="t-ico">🥗</span>
-      <span class="t-body"><b>${t('foodTitle')}</b><small>${famHealth != null ? t('famHealth',{n:famHealth}) : t('foodDesc')}</small></span>
+      <span class="t-body"><b>${t('foodTitle')}</b><small>${famStars ? t('famStars',{n:famStars}) : t('foodDesc')}</small></span>
     </button>
     <button class="tile tile-trophy" data-act="trophies">
       <span class="t-ico">🏆</span>
@@ -741,10 +740,10 @@ AFTER.dailyResult = () => {
    SNACK ATTACK (healthy-choice arcade)
    ========================================================= */
 let SN = null;
-const SNACK_TIME = 45;
+const SNACK_TIME = 45, POWER_GOAL = 5;
 SCREENS.snackPick = () => pickerHTML(`🍔🥦 ${t('snackTitle')}`, 'snackStart', p => `🏅 ${prof(p.id).snackBest}`) + `<div class="card"><b>${t('howToPlay')}</b><p class="muted">${t('snackRules')}</p></div>`;
 function snackStart(pid){
-  SN = { pid, score:0, energy:100, combo:0, left:SNACK_TIME, queue:shuffle(FOODS.concat(FOODS)), idx:0, busy:false, right:0, total:0, healthyEaten:0, junkEaten:0, over:false, msg:null };
+  SN = { pid, score:0, power:0, boosts:0, left:SNACK_TIME, queue:shuffle(FOODS.concat(FOODS)), idx:0, busy:false, nutritious:0, over:false };
   go('snackPlay');
 }
 SCREENS.snackPlay = () => {
@@ -754,16 +753,16 @@ SCREENS.snackPlay = () => {
     <span class="badge">${av(p,'xs')} ${esc(p.name)}</span>
     <span class="badge big">⭐ <b id="snScore">${SN.score}</b></span>
     <span class="badge big">⏱️ <b id="snTime">${SN.left}</b></span>
-    <span class="badge" id="snCombo">${SN.combo >= 2 ? '🔥 x' + SN.combo : ''}</span>
+    <span class="badge" id="snBoosts">${SN.boosts ? '⚡ x' + SN.boosts : ''}</span>
   </div>
-  <div class="energy"><span>🔋 ${t('energy')}</span><div class="progress"><i id="snEnergy" style="width:${SN.energy}%"></i></div><b id="snEnergyN">${SN.energy}%</b></div>
+  <div class="energy"><span>⚡ ${t('power')}</span><div class="progress"><i id="snPower" style="width:${SN.power/POWER_GOAL*100}%"></i></div><b id="snPowerN">${SN.power}/${POWER_GOAL}</b></div>
   <div class="food-stage">
     <div class="food-card" id="foodCard"><div class="food-emoji">${f.e}</div><div class="food-name">${esc(loc({ar:f.ar,en:f.en}))}</div></div>
     <div class="food-msg" id="foodMsg">${t('snackAsk')}</div>
   </div>
   <div class="snack-btns">
     <button class="btn snack-eat" data-act="snackEat" id="snEat">😋 ${t('eat')}</button>
-    <button class="btn snack-skip" data-act="snackSkip" id="snSkip">🙅 ${t('skip')}</button>
+    <button class="btn snack-skip" data-act="snackSkip" id="snSkip">⏭️ ${t('skip')}</button>
   </div>`;
 };
 AFTER.snackPlay = () => {
@@ -774,25 +773,27 @@ AFTER.snackPlay = () => {
     if(SN.left <= 0) snackEnd();
   }, 1000));
 };
+// Every choice is fine: nutritious picks earn more and charge the power meter; nothing is ever taken away.
 function snackChoose(eat){
   if(!SN || SN.busy || SN.over) return;
   SN.busy = true;
   const f = SN.queue[SN.idx % SN.queue.length], card = $('#foodCard'), msg = $('#foodMsg');
-  const fact = L()==='ar' ? f.far : f.fen;
-  let good;
-  if(eat && f.ok){ good = true; SN.combo++; SN.score += 10 + Math.min(SN.combo-1, 5)*2; SN.energy = Math.min(100, SN.energy + 5); SN.healthyEaten++; Snd.sfx.yum(); say('healthy','happy'); card.classList.add('yum'); confetti(25, { x:.5, y:.45, colors:['#2ee59d','#a3f7bf','#f7c948'] }); }
-  else if(eat && !f.ok){ good = false; SN.combo = 0; SN.energy = Math.max(0, SN.energy - 25); SN.junkEaten++; Snd.sfx.sad(); say('unhealthy','sad'); card.classList.add('yuck'); document.body.classList.add('sad-flash'); setTimeout(() => document.body.classList.remove('sad-flash'), 600); }
-  else if(!eat && !f.ok){ good = true; SN.combo++; SN.score += 10 + Math.min(SN.combo-1, 5)*2; Snd.sfx.pop(); say('skipJunk','happy'); card.classList.add('toss'); }
-  else { good = false; SN.combo = 0; SN.energy = Math.max(0, SN.energy - 5); Snd.sfx.wrong(); say('skipHealthy','calm'); card.classList.add('toss'); }
-  SN.total++; if(good) SN.right++;
-  msg.className = 'food-msg ' + (good ? 'good' : 'bad');
-  msg.textContent = (f.ok ? '✅ ' : '⚠️ ') + fact;
+  if(eat && f.ok){
+    SN.score += 15; SN.power++; SN.nutritious++;
+    Snd.sfx.yum(); card.classList.add('yum'); confetti(25, { x:.5, y:.45, colors:['#2ee59d','#a3f7bf','#f7c948'] });
+    if(SN.power >= POWER_GOAL){ SN.power = 0; SN.boosts++; SN.score += 30; Snd.sfx.level(); say('boost','happy'); toast(t('boostGot')); confetti(90); }
+    else say('healthy','happy');
+  } else if(eat){
+    SN.score += 5; Snd.sfx.pop(); say('treat','happy'); card.classList.add('yum');
+  } else {
+    Snd.sfx.click(); say('next','calm'); card.classList.add('toss');
+  }
+  msg.className = 'food-msg ' + (f.ok ? 'good' : 'neutral');
+  msg.textContent = (f.ok ? '💪 ' : '😋 ') + (L()==='ar' ? f.far : f.fen);
   $('#snScore').textContent = SN.score;
-  $('#snCombo').textContent = SN.combo >= 2 ? '🔥 x' + SN.combo : '';
-  $('#snEnergy').style.width = SN.energy + '%'; $('#snEnergyN').textContent = SN.energy + '%';
-  $('#snEnergy').parentElement.classList.toggle('low', SN.energy <= 30);
+  $('#snBoosts').textContent = SN.boosts ? '⚡ x' + SN.boosts : '';
+  $('#snPower').style.width = (SN.power/POWER_GOAL*100) + '%'; $('#snPowerN').textContent = `${SN.power}/${POWER_GOAL}`;
   $$('.snack-btns .btn').forEach(b => b.disabled = true);
-  if(SN.energy <= 0){ setTimeout(() => snackEnd(true), 1100); return; }
   setTimeout(() => {
     if(!SN || SN.over || screen !== 'snackPlay') return;
     SN.idx++; SN.busy = false;
@@ -803,9 +804,9 @@ function snackChoose(eat){
     $$('.snack-btns .btn').forEach(b => b.disabled = false);
   }, 1300);
 }
-function snackEnd(crash){
+function snackEnd(){
   if(!SN || SN.over) return;
-  SN.over = true; SN.crash = !!crash;
+  SN.over = true;
   const p = prof(SN.pid);
   SN.newBest = SN.score > p.snackBest;
   if(SN.newBest) p.snackBest = SN.score;
@@ -815,14 +816,14 @@ function snackEnd(crash){
   go('snackResult');
 }
 SCREENS.snackResult = () => {
-  const p = getPlayer(SN.pid), acc = SN.total ? Math.round(SN.right/SN.total*100) : 0;
-  const txt = t('snackShare',{score:SN.score, acc});
+  const p = getPlayer(SN.pid);
+  const txt = t('snackShare',{score:SN.score, n:SN.nutritious});
   return `${topbar(`🍔🥦 ${t('snackTitle')}`)}
   <div class="card center pad-l">
-    <div class="burst">${SN.crash ? '🪫' : SN.junkEaten === 0 ? '🥦' : '🏁'}</div>
-    <h2 class="big-title">${SN.crash ? t('energyCrash') : SN.newBest ? t('newBest') : t('roundOver')}</h2>
-    <p class="muted">${SN.crash ? t('crashTip') : SN.junkEaten === 0 ? t('noJunk') : t('junkCount',{n:SN.junkEaten})}</p>
-    <div class="stat-pills center-flex"><span class="badge big">⭐ ${SN.score}</span><span class="badge">🎯 ${acc}%</span><span class="badge">🥦 ${SN.healthyEaten}</span><span class="badge">🍩 ${SN.junkEaten}</span><span class="badge">🏅 ${t('best')}: ${prof(SN.pid).snackBest}</span></div>
+    <div class="burst">${SN.newBest ? '🏅' : '🏁'}</div>
+    <h2 class="big-title">${SN.newBest ? t('newBest') : t('roundOver')}</h2>
+    <p class="muted">${SN.nutritious ? t('snackNutri',{n:SN.nutritious}) : t('snackThanks')}</p>
+    <div class="stat-pills center-flex"><span class="badge big">⭐ ${SN.score}</span><span class="badge">🥦 ${SN.nutritious}</span><span class="badge">⚡ ${SN.boosts}</span><span class="badge">🏅 ${t('best')}: ${prof(SN.pid).snackBest}</span></div>
     <div class="end-actions">
       <button class="btn btn-gold btn-lg" data-act="snackStart" data-id="${esc(p.id)}">🔁 ${t('playAgain')}</button>
       <button class="btn btn-mint btn-lg" data-act="shareText" data-text="${esc(txt)}">📣 ${t('share')}</button>
@@ -831,18 +832,20 @@ SCREENS.snackResult = () => {
     </div>
   </div>`;
 };
-AFTER.snackResult = () => { if(SN.crash) { Snd.sfx.sad(); } else { Snd.sfx.fanfare(); confetti(SN.newBest ? 160 : 80); } };
+AFTER.snackResult = () => { Snd.sfx.fanfare(); confetti(SN.newBest ? 160 : 80); };
 
 /* =========================================================
    FOOD DIARY (real-life check-in)
    ========================================================= */
 function foodDay(pid){ const p = prof(pid), k = dateKey(); p.food[k] = p.food[k] || { items:{}, bonus:false }; const keys = Object.keys(p.food).sort(); while(keys.length > 30) delete p.food[keys.shift()]; return p.food[k]; }
+// Only nutritious picks are counted (as stars toward a daily goal); treats are logged without any judgement.
+const FOOD_GOAL = 5;
 function foodScore(pid){
-  const p = prof(pid), day = p.food[dateKey()]; if(!day) return { score:null, h:0, u:0 };
-  let h = 0, u = 0; Object.entries(day.items).forEach(([id,n]) => { const f = FOODS.find(x => x.id === id); if(!f) return; if(f.ok) h += n; else u += n; });
-  return { score: h+u ? Math.round(h/(h+u)*100) : null, h, u };
+  const day = prof(pid).food[dateKey()]; let h = 0, total = 0;
+  if(day) Object.entries(day.items).forEach(([id,n]) => { const f = FOODS.find(x => x.id === id); if(!f) return; total += n; if(f.ok) h += n; });
+  return { h, total };
 }
-const faceOf = s => s == null ? '😶' : s >= 80 ? '🤩' : s >= 60 ? '🙂' : s >= 40 ? '😐' : '😟';
+const faceOf = h => h >= FOOD_GOAL ? '🤩' : h >= 3 ? '😄' : h >= 1 ? '🙂' : '🍽️';
 SCREENS.food = (pid) => {
   const list = selectedPlayers().length ? selectedPlayers() : S.players;
   pid = pid && getPlayer(pid) ? pid : list[0] && list[0].id;
@@ -850,28 +853,27 @@ SCREENS.food = (pid) => {
   screenArg = pid;
   const day = foodDay(pid), sc = foodScore(pid), p = getPlayer(pid);
   const tile = f => { const n = day.items[f.id] || 0;
-    return `<div class="ftile ${f.ok?'ok':'junk'} ${n?'has':''}"><button class="fadd" data-act="foodAdd" data-f="${f.id}" aria-label="${esc(loc({ar:f.ar,en:f.en}))}"><span class="fe">${f.e}</span><span class="fn">${esc(loc({ar:f.ar,en:f.en}))}</span></button>${n ? `<span class="fcount">${n}</span><button class="fminus" data-act="foodRemove" data-f="${f.id}" aria-label="${t('remove')}">−</button>` : ''}</div>`; };
+    return `<div class="ftile ${f.ok?'ok':'treat'} ${n?'has':''}"><button class="fadd" data-act="foodAdd" data-f="${f.id}" aria-label="${esc(loc({ar:f.ar,en:f.en}))}"><span class="fe">${f.e}</span><span class="fn">${esc(loc({ar:f.ar,en:f.en}))}</span></button>${n ? `<span class="fcount">${n}</span><button class="fminus" data-act="foodRemove" data-f="${f.id}" aria-label="${t('remove')}">−</button>` : ''}</div>`; };
   return `${topbar('🥗 ' + t('foodTitle'))}
   <div class="tabs">${list.map(x => `<button class="tab ${x.id===pid?'on':''}" data-act="foodTab" data-id="${esc(x.id)}">${esc(x.avatar)} ${esc(x.name)}</button>`).join('')}</div>
   <div class="card food-head">
-    <div class="ring" style="--p:${sc.score||0}"><span>${faceOf(sc.score)}</span></div>
+    <div class="ring" style="--p:${Math.min(100, sc.h/FOOD_GOAL*100)}"><span>${faceOf(sc.h)}</span></div>
     <div class="grow"><h3>${t('todayOf',{name:esc(p.name)})}</h3>
-      <div class="muted">${sc.score == null ? t('foodEmpty') : t('foodSummary',{s:sc.score, h:sc.h, u:sc.u})}</div>
-      ${day.bonus ? `<span class="badge ok-badge">🥦 ${t('healthyBonusDone')}</span>` : `<div class="muted small">🎁 ${t('healthyBonusHint')}</div>`}</div>
+      <div class="muted">${sc.total ? t('foodSummary',{h:sc.h, goal:FOOD_GOAL}) : t('foodEmpty')}</div>
+      ${day.bonus ? `<span class="badge ok-badge">🥦 ${t('healthyBonusDone')}</span>` : `<div class="muted small">🎁 ${t('healthyBonusHint',{goal:FOOD_GOAL})}</div>`}</div>
   </div>
   <h3 class="sec">💚 ${t('healthyFoods')}</h3><div class="food-grid">${FOODS.filter(f => f.ok).map(tile).join('')}</div>
-  <h3 class="sec">⚠️ ${t('treatFoods')}</h3><div class="food-grid">${FOODS.filter(f => !f.ok).map(tile).join('')}</div>
+  <h3 class="sec">🍪 ${t('treatFoods')}</h3><div class="food-grid">${FOODS.filter(f => !f.ok).map(tile).join('')}</div>
   <div class="card mt"><div class="card-title mb">👨‍👩‍👧‍👦 ${t('familyBoard')}</div>
-    <div class="rank-list">${list.map(x => { const s = foodScore(x.id); return `<div class="rank"><span class="a">${esc(x.avatar)}</span><div class="info"><b>${esc(x.name)}</b><div class="progress thin"><i style="width:${s.score||0}%"></i></div></div><span class="score">${faceOf(s.score)} ${s.score == null ? '—' : s.score + '%'}</span></div>`; }).join('')}</div>
+    <div class="rank-list">${list.map(x => { const s = foodScore(x.id); return `<div class="rank"><span class="a">${esc(x.avatar)}</span><div class="info"><b>${esc(x.name)}</b><div class="progress thin"><i style="width:${Math.min(100, s.h/FOOD_GOAL*100)}%"></i></div></div><span class="score">${faceOf(s.h)} ⭐ ${s.h}</span></div>`; }).join('')}</div>
   </div>`;
 };
 function foodAdd(fid){
   const pid = screenArg, f = FOODS.find(x => x.id === fid); if(!pid || !f) return;
   const day = foodDay(pid); day.items[fid] = (day.items[fid] || 0) + 1;
-  if(f.ok){ Snd.sfx.yum(); say('healthy','happy'); }
-  else { Snd.sfx.sad(); say('unhealthy','sad'); document.body.classList.add('sad-flash'); setTimeout(() => document.body.classList.remove('sad-flash'), 600); }
+  if(f.ok){ Snd.sfx.yum(); say('healthy','happy'); } else { Snd.sfx.pop(); say('treat','happy'); }
   const sc = foodScore(pid);
-  if(!day.bonus && sc.h >= 4 && sc.score >= 75){
+  if(!day.bonus && sc.h >= FOOD_GOAL){
     day.bonus = true; prof(pid).healthyDays++; award(pid, 30, 20); ach(pid,'healthy');
     setTimeout(() => { toast('🥦 ' + t('healthyBonusGot')); Snd.sfx.coin(); confetti(120, { colors:['#2ee59d','#a3f7bf','#f7c948'] }); }, 400);
   }

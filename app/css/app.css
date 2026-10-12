@@ -28,8 +28,6 @@ body::before{
     radial-gradient(1.5px 1.5px at 40% 70%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 88% 52%, #fff 50%, transparent 51%),
     radial-gradient(1px 1px at 25% 88%, #fff 50%, transparent 51%), radial-gradient(1.5px 1.5px at 60% 35%, #fff 50%, transparent 51%);
 }
-body.sad-flash::after{content:""; position:fixed; inset:0; background:radial-gradient(circle, transparent 40%, rgba(255,60,60,.35)); pointer-events:none; z-index:80; animation:fadeOut .6s forwards}
-@keyframes fadeOut{to{opacity:0}}
 .wrap{position:relative; z-index:1; max-width:980px; margin:0 auto; padding:max(14px, env(safe-area-inset-top)) 16px 90px}
 button{font:inherit; color:inherit}
 .screen{animation:fadeUp .4s ease}
@@ -283,8 +281,7 @@ p{line-height:1.8}
 .hud{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between}
 .energy{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; margin:14px 0; font-weight:800}
 .energy .progress{height:16px}
-.energy .progress > i{background:linear-gradient(90deg,#2ee59d,#a3f7bf)}
-.energy .progress.low > i{background:linear-gradient(90deg,#ff6b6b,#ffb347)}
+.energy .progress > i{background:linear-gradient(90deg,#f7c948,#2ee59d)}
 .food-stage{display:flex; flex-direction:column; align-items:center; gap:14px; margin:10px 0 18px}
 .food-card{width:min(300px,82vw); aspect-ratio:1/1; border-radius:32px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
   background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.22),rgba(255,255,255,.05)); border:2px solid var(--line); box-shadow:0 24px 50px rgba(0,0,0,.35)}
@@ -294,17 +291,15 @@ p{line-height:1.8}
 @keyframes popIn{from{transform:scale(.6); opacity:0} to{transform:none; opacity:1}}
 .food-card.yum{animation:yum .6s ease; border-color:var(--mint); box-shadow:0 0 0 6px rgba(46,229,157,.25), 0 24px 50px rgba(0,0,0,.35)}
 @keyframes yum{30%{transform:scale(1.08)} 60%{transform:scale(.95)} 100%{transform:scale(.2); opacity:0}}
-.food-card.yuck{animation:yuck .8s ease; border-color:var(--coral); box-shadow:0 0 0 6px rgba(255,107,107,.3), 0 24px 50px rgba(0,0,0,.35)}
-@keyframes yuck{10%,50%{transform:translateX(-10px) rotate(-4deg)} 30%,70%{transform:translateX(10px) rotate(4deg)} 100%{transform:scale(.6); opacity:.2; filter:grayscale(1)}}
 .food-card.toss{animation:toss .6s ease forwards}
 @keyframes toss{to{transform:translateY(-60px) rotate(25deg) scale(.4); opacity:0}}
 .food-msg{min-height:52px; text-align:center; font-weight:800; max-width:520px; padding:10px 14px; border-radius:14px}
 .food-msg.good{background:rgba(46,229,157,.15); color:#b9ffe1}
-.food-msg.bad{background:rgba(255,107,107,.15); color:#ffd0d0}
+.food-msg.neutral{background:rgba(255,224,122,.14); color:#ffeab0}
 .snack-btns{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .snack-btns .btn{font-size:1.35rem; padding:20px 10px; border-radius:20px}
 .snack-eat{background:linear-gradient(180deg,#5cf5b8,#16c47f); color:#03341f; box-shadow:0 6px 0 #0d8a58}
-.snack-skip{background:linear-gradient(180deg,#ff9a9a,#e04848); color:#3d0606; box-shadow:0 6px 0 #9e2a2a}
+.snack-skip{background:linear-gradient(180deg,#9fd8ff,#4c9bf0); color:#06213d; box-shadow:0 6px 0 #2a5f9e}
 .snack-btns .btn:not(:disabled):active{transform:translateY(4px); box-shadow:none}
 
 /* ---------- Food diary ---------- */
@@ -322,7 +317,7 @@ p{line-height:1.8}
 .fe{font-size:2.1rem}
 .fn{font-size:.85rem; font-weight:700; text-align:center; line-height:1.3}
 .ftile.ok.has .fadd{border-color:var(--mint); background:rgba(46,229,157,.12)}
-.ftile.junk.has .fadd{border-color:var(--coral); background:rgba(255,107,107,.12)}
+.ftile.treat.has .fadd{border-color:var(--gold); background:rgba(247,201,72,.12)}
 .fcount{position:absolute; top:-6px; inset-inline-end:-4px; min-width:24px; height:24px; border-radius:999px; background:var(--gold); color:#3a2300; font-weight:900; font-size:.85rem; display:grid; place-items:center; padding:0 6px; pointer-events:none}
 .fminus{position:absolute; top:-6px; inset-inline-start:-4px; width:26px; height:26px; border-radius:50%; border:0; background:#28406b; color:#fff; font-weight:900; cursor:pointer}
 
@@ -346,7 +341,6 @@ p{line-height:1.8}
 [dir="ltr"] .bubble{transform:translate(-50%,140%)}
 .bubble.show{transform:translate(50%,0); opacity:1}
 [dir="ltr"] .bubble.show{transform:translate(-50%,0)}
-.bubble.sad{background:linear-gradient(90deg,#6b2a3a,#4a2f5e)}
 .bubble .face{font-size:1.7rem}
 #toasts{position:fixed; top:72px; pointer-events:none; left:50%; transform:translateX(-50%); z-index:120; display:flex; flex-direction:column; gap:8px; width:min(480px, calc(100% - 32px))}
 .toast .btn{pointer-events:auto}
@@ -374,4 +368,4 @@ p{line-height:1.8}
   *,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
 }
 
-#snCombo:empty{visibility:hidden}
+#snBoosts:empty{visibility:hidden}
