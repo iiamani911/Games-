@@ -462,7 +462,7 @@ function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const
 /* =========================================================
    Constants
    ========================================================= */
-const DEFAULT_NAMES = ['أماني','جد','مريم','ميمي','مرام','يمنى','ميس','سارة','رزان','جنى','رؤى','محمود','صبا','احمد'];
+const DEFAULT_NAMES = ['أماني','جودي','مريم','ميمي','مرام','يمنى','ميس','سارة','رزان','جنى','رؤى','محمود','صبا','احمد'];
 const AVATARS = ['🦁','🦊','🐼','🦄','🐙','🦉','🐬','🦋','🐢','🐯','🐨','🦜','🐳','🐲','🐧','🦈','🐝','🐸','🦩','🐿️'];
 const COLORS = ['#ff8fab','#7bdff2','#b2f7ef','#f7d6e0','#ffd166','#a0c4ff','#caffbf','#ffadad','#bdb2ff','#fdffb6','#9bf6ff','#ffc6ff','#ffb703','#8ecae6','#90e0ef','#e9c46a','#f4a261','#c3f0ca','#d0b8ff','#ffcad4'];
 const LEVELS = { easy:{label:'سهل', icon:'🟢'}, medium:{label:'متوسط', icon:'🟡'}, hard:{label:'صعب', icon:'🔴'} };
@@ -810,6 +810,8 @@ function loadStore(){
   try{ data = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ data = {}; }
   S.players = Array.isArray(data.players) && data.players.length ? data.players.filter(p => p && p.id && p.name) : defaultPlayers();
   S.players.forEach(p => { if(!LEVELS[p.level]) p.level='medium'; });
+  // Rename the old default player «جد» to «جودي» for browsers that saved the earlier list.
+  S.players.forEach(p => { if(p.id === 'd1' && p.name === 'جد' && !S.players.some(x => x.name === 'جودي')) p.name = 'جودي'; });
   S.selected = new Set(Array.isArray(data.selected) ? data.selected.filter(id => S.players.some(p => p.id===id)) : S.players.map(p => p.id));
   if(data.settings) Object.assign(S.settings, data.settings);
   S.seen = Array.isArray(data.seen) ? data.seen : [];
