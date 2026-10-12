@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مغامرة كنز العائلة</title>
+<style>
+:root{
+  --bg1:#0b1d3a; --bg2:#071226;
+  --gold:#f7c948; --gold2:#f0a500; --coral:#ff6b6b; --mint:#2ee59d; --sky:#4cc9f0; --violet:#a78bfa;
+  --ink:#eef4ff; --muted:#a9bcd8; --card:rgba(255,255,255,.065); --card2:rgba(255,255,255,.11); --line:rgba(255,255,255,.14);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100vh; color:var(--ink);
+  font-family:"Tajawal","Cairo","Noto Kufi Arabic","Noto Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  background:
+    radial-gradient(1100px 600px at 85% -10%, #1f5f8b 0%, transparent 60%),
+    radial-gradient(900px 520px at -5% 110%, #3b1f6b 0%, transparent 55%),
+    linear-gradient(165deg,var(--bg1),var(--bg2));
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.55; z-index:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 72% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 40% 70%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 52%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 25% 88%, #fff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 60% 35%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 5% 50%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 95% 85%, #fff 50%, transparent 51%);
+}
+.wrap{position:relative; z-index:1; max-width:980px; margin:0 auto; padding:16px 16px 48px}
+button{font:inherit; color:inherit}
+.screen{display:none}
+.screen.active{display:block; animation:fadeUp .45s ease}
+@keyframes fadeUp{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+h1,h2,h3{margin:0; line-height:1.3}
+p{line-height:1.8}
+.muted{color:var(--muted)}
+.hidden{display:none !important}
+
+/* ---------- Buttons ---------- */
+.btn{
+  border:0; border-radius:14px; padding:12px 18px; font-weight:800; font-size:1rem; cursor:pointer;
+  transition:transform .12s ease, box-shadow .2s ease, background .2s ease, opacity .2s; touch-action:manipulation;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn:focus-visible,.chip:focus-visible,.player:focus-visible,.opt:focus-visible,.tile:focus-visible,.seg button:focus-visible{outline:3px solid var(--sky); outline-offset:2px}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.btn-gold{background:linear-gradient(180deg,#ffe07a,var(--gold2)); color:#3a2300; box-shadow:0 5px 0 #a86f00, 0 12px 24px rgba(240,165,0,.28)}
+.btn-gold:not(:disabled):active{transform:translateY(4px); box-shadow:0 1px 0 #a86f00}
+.btn-mint{background:linear-gradient(180deg,#5cf5b8,#16c47f); color:#03341f; box-shadow:0 5px 0 #0d8a58}
+.btn-mint:not(:disabled):active{transform:translateY(4px); box-shadow:0 1px 0 #0d8a58}
+.btn-ghost{background:rgba(255,255,255,.08); border:1px solid var(--line)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+.btn-danger{background:rgba(255,107,107,.15); border:1px solid rgba(255,107,107,.4); color:#ffc9c9}
+.btn-lg{font-size:1.2rem; padding:16px 28px; border-radius:18px}
+.btn-sm{font-size:.88rem; padding:8px 12px; border-radius:11px}
+.icon-btn{width:44px; height:44px; padding:0; border-radius:14px; font-size:1.25rem}
+
+/* ---------- Cards ---------- */
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px; margin-bottom:16px; box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px}
+.card-title{font-size:1.15rem; font-weight:900; display:flex; align-items:center; gap:8px}
+.badge{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:rgba(255,255,255,.1); font-size:.85rem; font-weight:700}
+
+/* ---------- Hero ---------- */
+.hero{text-align:center; padding:18px 8px 8px}
+.hero .logo{font-size:3.6rem; display:inline-block; animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-8px) rotate(4deg)}}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem); font-weight:900; background:linear-gradient(90deg,#ffe07a,#ffb347,#ff7eb3); -webkit-background-clip:text; background-clip:text; color:transparent; margin-top:4px}
+.hero p{margin:6px auto 0; max-width:620px; color:var(--muted)}
+
+/* ---------- Players ---------- */
+.players{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px}
+.player{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px 10px;
+  background:rgba(255,255,255,.05); border:2px solid var(--line); border-radius:16px; cursor:pointer; user-select:none;
+  transition:transform .15s, border-color .2s, background .2s, opacity .2s; opacity:.6;
+}
+.player:hover{transform:translateY(-2px)}
+.player.on{opacity:1; border-color:var(--gold); background:linear-gradient(180deg,rgba(247,201,72,.16),rgba(247,201,72,.04)); box-shadow:0 0 0 3px rgba(247,201,72,.12)}
+.player .av{width:52px; height:52px; border-radius:50%; display:grid; place-items:center; font-size:1.7rem; box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
+.player .nm{font-weight:900; font-size:1.05rem; text-align:center; word-break:break-word}
+.player .check{position:absolute; top:8px; right:8px; width:24px; height:24px; border-radius:50%; display:grid; place-items:center; font-size:.8rem; background:rgba(255,255,255,.12); border:1px solid var(--line)}
+.player.on .check{background:var(--gold); color:#3a2300; border-color:var(--gold)}
+.player .rm{position:absolute; top:6px; left:6px; width:28px; height:28px; border-radius:9px; border:0; cursor:pointer; background:rgba(255,107,107,.14); color:#ffb3b3; font-size:.95rem; display:grid; place-items:center}
+.player .rm:hover{background:rgba(255,107,107,.35); color:#fff}
+.lvl{border:0; cursor:pointer; border-radius:999px; padding:4px 10px; font-size:.8rem; font-weight:800; background:rgba(255,255,255,.1)}
+.lvl.easy{background:rgba(46,229,157,.18); color:#9dffd6}
+.lvl.medium{background:rgba(247,201,72,.18); color:#ffe39a}
+.lvl.hard{background:rgba(255,107,107,.18); color:#ffb8b8}
+.lvl.dim{opacity:.35}
+.add-row{display:flex; gap:8px; margin-top:14px}
+.add-row input{
+  flex:1; min-width:0; font:inherit; font-size:1rem; color:var(--ink); background:rgba(0,0,0,.25); border:1px solid var(--line);
+  border-radius:14px; padding:12px 14px; outline:none;
+}
+.add-row input:focus{border-color:var(--sky)}
+.toolbar{display:flex; gap:6px; flex-wrap:wrap}
+
+/* ---------- Mode / segmented ---------- */
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.mode{
+  text-align:right; cursor:pointer; padding:16px; border-radius:16px; border:2px solid var(--line); background:rgba(255,255,255,.04);
+  transition:border-color .2s, background .2s, transform .15s;
+}
+.mode:hover{transform:translateY(-2px)}
+.mode.on{border-color:var(--sky); background:linear-gradient(180deg,rgba(76,201,240,.18),rgba(76,201,240,.04))}
+.mode .mi{font-size:2rem}
+.mode b{display:block; font-size:1.1rem; margin:4px 0 2px}
+.mode small{color:var(--muted); line-height:1.6; display:block}
+.settings-grid{display:grid; grid-template-columns:1fr; gap:16px}
+.setting-label{font-weight:800; margin-bottom:8px; display:block}
+.seg{display:flex; flex-wrap:wrap; gap:6px; background:rgba(0,0,0,.2); padding:5px; border-radius:14px; border:1px solid var(--line)}
+.seg button{flex:1 1 auto; border:0; cursor:pointer; padding:10px 12px; border-radius:10px; background:transparent; font-weight:800; font-size:.95rem; color:var(--muted); transition:background .2s,color .2s}
+.seg button.on{background:linear-gradient(180deg,#ffe07a,var(--gold2)); color:#3a2300}
+.note{font-size:.88rem; color:var(--muted); margin-top:8px; line-height:1.7}
+.summary{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.summary .txt{font-weight:700; line-height:1.8}
+
+/* ---------- Top bar ---------- */
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px}
+.topbar .ttl{font-weight:900; font-size:1.05rem; display:flex; align-items:center; gap:8px; text-align:center}
+.sound-fab{position:fixed; bottom:14px; left:14px; z-index:50; background:rgba(13,30,58,.85)}
+
+/* ---------- Map ---------- */
+.map-wrap{border-radius:22px; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,.4); border:4px solid #8a5a2b; background:#e9d3a0}
+.map-wrap svg{display:block; width:100%; height:auto}
+.node-pulse{animation:pulse 1.6s ease-in-out infinite; transform-box:fill-box; transform-origin:center}
+@keyframes pulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.13)}}
+.ship{transition:transform 1.2s cubic-bezier(.5,0,.3,1)}
+.stage-card{display:flex; gap:14px; align-items:center}
+.stage-card .big{font-size:3rem; flex:none; width:76px; height:76px; border-radius:20px; display:grid; place-items:center; background:rgba(255,255,255,.08)}
+.story{font-size:1.05rem}
+
+/* ---------- Question ---------- */
+.progress{height:10px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden}
+.progress > i{display:block; height:100%; background:linear-gradient(90deg,var(--gold),#ff7eb3); border-radius:999px; transition:width .5s ease}
+.turn{
+  display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:18px; margin:14px 0;
+  background:linear-gradient(90deg,rgba(247,201,72,.18),rgba(255,126,179,.10)); border:1px solid rgba(247,201,72,.35);
+  animation:turnIn .5s ease;
+}
+@keyframes turnIn{from{transform:scale(.96); opacity:0} to{transform:none; opacity:1}}
+.turn .av{width:58px; height:58px; border-radius:50%; display:grid; place-items:center; font-size:2rem; flex:none; box-shadow:0 0 0 4px rgba(255,255,255,.15)}
+.turn .who{font-size:1.4rem; font-weight:900}
+.turn .sub{color:var(--muted); font-size:.92rem}
+.qcard{position:relative}
+.qmeta{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px}
+.qtext{font-size:clamp(1.2rem,3.4vw,1.55rem); font-weight:800; line-height:1.75; margin:6px 0 4px}
+.seq{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px; justify-content:center}
+.seq span{min-width:54px; height:58px; padding:0 10px; border-radius:14px; display:grid; place-items:center; font-size:1.6rem; font-weight:900; background:rgba(255,255,255,.09); border:1px solid var(--line)}
+.seq span.q{background:rgba(247,201,72,.2); border:2px dashed var(--gold); color:var(--gold); animation:pulse 1.4s infinite}
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px}
+.opt{
+  display:flex; align-items:center; gap:10px; text-align:right; cursor:pointer; padding:14px; border-radius:16px; font-size:1.12rem; font-weight:800;
+  background:rgba(255,255,255,.07); border:2px solid var(--line); transition:transform .12s, background .2s, border-color .2s; min-height:62px;
+}
+.opt:hover:not(:disabled){background:rgba(255,255,255,.13); transform:translateY(-2px)}
+.opt .k{flex:none; width:32px; height:32px; border-radius:10px; display:grid; place-items:center; background:rgba(255,255,255,.12); font-size:.95rem}
+.opt .v{flex:1; word-break:break-word}
+.opt.emoji .v{font-size:1.8rem}
+.opt:disabled{cursor:default}
+.opt.right{background:rgba(46,229,157,.22); border-color:var(--mint); animation:pop .4s}
+.opt.wrong{background:rgba(255,107,107,.2); border-color:var(--coral); animation:shake .45s}
+.opt.struck{opacity:.3; text-decoration:line-through}
+@keyframes pop{50%{transform:scale(1.05)}}
+@keyframes shake{20%,60%{transform:translateX(-7px)} 40%,80%{transform:translateX(7px)}}
+.hint-box{margin-top:14px; padding:12px 14px; border-radius:14px; background:rgba(76,201,240,.12); border:1px dashed rgba(76,201,240,.5); font-weight:700}
+.q-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; justify-content:space-between; align-items:center}
+.timer{display:flex; align-items:center; gap:10px; margin-top:12px}
+.timer .progress{flex:1}
+.timer .progress > i{background:linear-gradient(90deg,var(--mint),var(--sky)); transition:width 1s linear}
+.timer.low .progress > i{background:linear-gradient(90deg,var(--coral),#ffb347)}
+.timer b{min-width:44px; text-align:center}
+
+/* scramble */
+.clue{margin-top:6px; color:var(--muted); font-weight:700}
+.preview{text-align:center; font-size:2rem; font-weight:900; min-height:52px; margin-top:12px; letter-spacing:1px; color:var(--gold)}
+.slots,.tiles{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px}
+.slot,.tile{width:54px; height:58px; border-radius:14px; display:grid; place-items:center; font-size:1.7rem; font-weight:900; border:2px solid var(--line)}
+.slot{background:rgba(0,0,0,.22); border-style:dashed; cursor:pointer}
+.slot.filled{border-style:solid; background:rgba(255,255,255,.1)}
+.slot.locked{border-color:var(--sky); background:rgba(76,201,240,.18); cursor:default}
+.slot.right{border-color:var(--mint); background:rgba(46,229,157,.22)}
+.slot.wrong{border-color:var(--coral); background:rgba(255,107,107,.2)}
+.tile{cursor:pointer; background:linear-gradient(180deg,#fff3c4,#f3d27a); color:#3a2300; box-shadow:0 4px 0 #b88a1d; transition:transform .1s, opacity .2s}
+.tile:active{transform:translateY(3px); box-shadow:0 1px 0 #b88a1d}
+.tile.used{opacity:.18; pointer-events:none; box-shadow:none}
+
+/* feedback */
+.feedback{margin-top:16px; padding:16px; border-radius:18px; animation:fadeUp .35s ease}
+.feedback.good{background:linear-gradient(180deg,rgba(46,229,157,.2),rgba(46,229,157,.06)); border:1px solid rgba(46,229,157,.5)}
+.feedback.bad{background:linear-gradient(180deg,rgba(255,159,67,.2),rgba(255,159,67,.05)); border:1px solid rgba(255,159,67,.5)}
+.feedback h3{font-size:1.35rem; margin-bottom:6px}
+.feedback .row{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:10px}
+.pts{font-weight:900; color:var(--gold); font-size:1.1rem}
+
+/* scoreboard */
+.board{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin}
+.sb{flex:none; display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:14px; background:rgba(255,255,255,.06); border:1px solid var(--line); font-weight:800}
+.sb.cur{border-color:var(--gold); background:rgba(247,201,72,.15)}
+.sb .a{font-size:1.2rem}
+.sb .p{color:var(--gold)}
+.team-meter{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center}
+.team-meter .gems{font-size:1.5rem}
+.stat-pills{display:flex; gap:8px; flex-wrap:wrap}
+
+/* stage clear */
+.center{text-align:center}
+.burst{font-size:4.5rem; display:inline-block; animation:bob 2.4s ease-in-out infinite}
+.pieces{display:flex; justify-content:center; gap:8px; margin:14px 0; flex-wrap:wrap}
+.piece{width:46px; height:46px; border-radius:12px; display:grid; place-items:center; font-size:1.4rem; background:rgba(255,255,255,.06); border:1px dashed var(--line)}
+.piece.got{background:rgba(247,201,72,.2); border:1px solid var(--gold); animation:pop .5s}
+
+/* chest */
+.chest-stage{position:relative; height:280px; pointer-events:none; display:grid; place-items:center; margin:10px 0 6px}
+.rays{position:absolute; width:min(420px,96vw); height:min(420px,96vw); pointer-events:none; border-radius:50%; opacity:0; transition:opacity .8s;
+  background:repeating-conic-gradient(from 0deg, rgba(255,224,122,.35) 0deg 10deg, transparent 10deg 22deg);
+  -webkit-mask:radial-gradient(circle, #000 20%, transparent 68%); mask:radial-gradient(circle, #000 20%, transparent 68%);
+  animation:spin 18s linear infinite}
+.opened .rays{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chest{position:relative; width:220px; height:170px; perspective:600px; animation:wiggle 2.2s ease-in-out infinite}
+.opened .chest{animation:none}
+@keyframes wiggle{0%,80%,100%{transform:rotate(0)} 85%{transform:rotate(-3deg)} 90%{transform:rotate(3deg)} 95%{transform:rotate(-2deg)}}
+.chest .base{position:absolute; bottom:0; width:100%; height:100px; border-radius:10px 10px 16px 16px;
+  background:linear-gradient(180deg,#a0612c,#6e3d17); border:5px solid #3e2109; box-shadow:inset 0 -12px 0 rgba(0,0,0,.2), 0 18px 30px rgba(0,0,0,.45)}
+.chest .base::before,.chest .base::after{content:""; position:absolute; top:0; bottom:0; width:16px; background:linear-gradient(180deg,#ffd75e,#c58b00)}
+.chest .base::before{right:28px} .chest .base::after{left:28px}
+.chest .lock{position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:36px; height:42px; border-radius:8px; background:linear-gradient(180deg,#ffe27a,#c58b00); border:3px solid #6b4a00; z-index:3}
+.chest .lock::after{content:""; position:absolute; left:50%; top:14px; width:8px; height:12px; transform:translateX(-50%); border-radius:4px; background:#3e2109}
+.chest .lid{position:absolute; bottom:94px; width:100%; height:76px; border-radius:110px 110px 8px 8px / 70px 70px 8px 8px;
+  background:linear-gradient(180deg,#b9733a,#7c4519); border:5px solid #3e2109; transform-origin:50% 100%; transition:transform 1s cubic-bezier(.3,1.6,.5,1); z-index:2}
+.chest .lid::before,.chest .lid::after{content:""; position:absolute; top:0; bottom:0; width:16px; background:linear-gradient(180deg,#ffd75e,#c58b00)}
+.chest .lid::before{right:28px} .chest .lid::after{left:28px}
+.opened .chest .lid{transform:rotateX(118deg)}
+.opened .chest .lock{opacity:0; transition:opacity .3s}
+.loot{position:absolute; bottom:110px; left:50%; font-size:2.2rem; opacity:0; pointer-events:none}
+.opened .loot{animation:lootUp 1.6s ease-out forwards}
+@keyframes lootUp{0%{opacity:0; transform:translate(-50%,40px) scale(.4)} 30%{opacity:1} 100%{opacity:1; transform:translate(calc(-50% + var(--dx)), var(--dy)) scale(1.1) rotate(var(--r))}}
+.glow{position:absolute; bottom:96px; width:180px; height:40px; left:50%; transform:translateX(-50%); border-radius:50%; background:radial-gradient(#fff6c2,rgba(255,215,94,0)); opacity:0; transition:opacity .6s .3s; filter:blur(4px)}
+.opened .glow{opacity:1}
+.tier{font-size:clamp(1.5rem,4.5vw,2.2rem); font-weight:900; background:linear-gradient(90deg,#ffe07a,#ffb347); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+/* results */
+.podium{display:flex; justify-content:center; align-items:flex-end; gap:10px; margin:18px 0 8px}
+.pod{flex:1; max-width:170px; text-align:center}
+.pod .av{width:62px; height:62px; margin:0 auto 6px; border-radius:50%; display:grid; place-items:center; font-size:2rem; box-shadow:0 0 0 4px rgba(255,255,255,.18)}
+.pod .nm{font-weight:900; word-break:break-word}
+.pod .blk{margin-top:8px; border-radius:14px 14px 4px 4px; display:grid; place-items:center; font-size:1.8rem; font-weight:900}
+.pod.p1 .blk{height:120px; background:linear-gradient(180deg,#ffe07a,#d69a00); color:#3a2300}
+.pod.p2 .blk{height:90px; background:linear-gradient(180deg,#e8eef7,#9aa8bb); color:#24303f}
+.pod.p3 .blk{height:70px; background:linear-gradient(180deg,#f2b27c,#b06a33); color:#3a1d06}
+.rank-list{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+.rank{display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:14px; background:rgba(255,255,255,.06); border:1px solid var(--line)}
+.rank .n{width:30px; font-weight:900; color:var(--muted); text-align:center}
+.rank .a{font-size:1.5rem}
+.rank .info{flex:1; min-width:0}
+.rank .info b{display:block}
+.rank .info small{color:var(--muted)}
+.rank .score{font-weight:900; color:var(--gold); font-size:1.15rem; white-space:nowrap}
+.medals{display:flex; gap:6px; flex-wrap:wrap; margin-top:4px}
+.medal{font-size:.78rem; padding:2px 8px; border-radius:999px; background:rgba(167,139,250,.18); color:#ddd3ff; font-weight:700}
+.end-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:18px}
+
+/* modal + toast */
+.modal-bg{position:fixed; inset:0; background:rgba(3,8,20,.7); display:grid; place-items:center; z-index:100; padding:16px; animation:fadeUp .2s}
+.modal{max-width:420px; width:100%; background:#13284a; border:1px solid var(--line); border-radius:22px; padding:22px; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.modal h3{font-size:1.3rem; margin-bottom:8px}
+.modal .acts{display:flex; flex-direction:column; gap:8px; margin-top:16px}
+.toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:120; background:#1d3a66; border:1px solid var(--line); padding:12px 16px; border-radius:14px; font-weight:700; display:flex; gap:12px; align-items:center; box-shadow:0 12px 30px rgba(0,0,0,.45); animation:fadeUp .25s; max-width:calc(100% - 32px)}
+#confetti{position:fixed; inset:0; pointer-events:none; z-index:90}
+
+@media (max-width:560px){
+  .modes{grid-template-columns:1fr}
+  .opts{grid-template-columns:1fr}
+  .players{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .slot,.tile{width:46px; height:50px; font-size:1.45rem}
+  .seq span{min-width:46px; height:50px; font-size:1.35rem}
+  .stage-card .big{width:62px; height:62px; font-size:2.4rem}
+  .chest{transform:scale(.85)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<button class="btn btn-ghost icon-btn sound-fab" id="soundBtn" aria-label="تشغيل أو كتم الصوت" title="الصوت">🔊</button>
+
+<div class="wrap">
+
+  <!-- ================= SETUP ================= -->
+  <section class="screen active" id="screen-setup">
+    <div class="hero">
+      <div class="logo">🗺️</div>
+      <h1>مغامرة كنز العائلة</h1>
+      <p>خريطة قديمة، خمس محطات غامضة، وكنز ينتظر الأذكى والأشجع! اختاروا الأبطال وانطلقوا.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🧑‍🤝‍🧑 الأبطال <span class="badge" id="selCount"></span></div>
+        <div class="toolbar">
+          <button class="btn btn-ghost btn-sm" id="selAll">تحديد الكل</button>
+          <button class="btn btn-ghost btn-sm" id="selNone">إلغاء التحديد</button>
+          <button class="btn btn-ghost btn-sm" id="restore">↺ استعادة الأسماء</button>
+        </div>
+      </div>
+      <p class="muted" style="margin:-4px 0 12px;font-size:.92rem">اضغط على البطاقة لضمّ اللاعب أو استبعاده من هذه الجولة • اضغط على شارة المستوى لتغييرها • ✕ للحذف</p>
+      <div class="players" id="players"></div>
+      <div class="add-row">
+        <input id="newName" type="text" maxlength="20" placeholder="اسم لاعب جديد..." aria-label="اسم لاعب جديد" autocomplete="off">
+        <button class="btn btn-mint" id="addBtn">➕ إضافة</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">🎮 طريقة اللعب</div>
+      <div class="modes">
+        <div class="mode" data-mode="team" role="button" tabindex="0">
+          <div class="mi">🤝</div><b>فريق واحد (تعاوني)</b>
+          <small>الجميع فريق واحد، يتناوبون على الإجابة ويتشاورون. النقاط والجواهر مشتركة.</small>
+        </div>
+        <div class="mode" data-mode="solo" role="button" tabindex="0">
+          <div class="mi">🏆</div><b>كل لاعب لنفسه (فردي)</b>
+          <small>لكل لاعب نقاطه الخاصة، وعدد أدوار متساوٍ للجميع. من يجمع أكثر يفتح الكنز!</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="settings-grid">
+        <div>
+          <span class="setting-label">📶 مستوى الصعوبة</span>
+          <div class="seg" data-setting="diff">
+            <button data-v="player">حسب كل لاعب</button>
+            <button data-v="easy">سهل</button>
+            <button data-v="medium">متوسط</button>
+            <button data-v="hard">صعب</button>
+            <button data-v="progressive">متدرّج</button>
+          </div>
+          <div class="note" id="diffNote"></div>
+        </div>
+        <div>
+          <span class="setting-label">🧭 طول المغامرة</span>
+          <div class="seg" data-setting="length">
+            <button data-v="2">قصيرة</button>
+            <button data-v="3">عادية</button>
+            <button data-v="4">طويلة</button>
+          </div>
+        </div>
+        <div>
+          <span class="setting-label">⏱️ مؤقّت لكل سؤال</span>
+          <div class="seg" data-setting="timer">
+            <button data-v="0">بدون مؤقّت</button>
+            <button data-v="60">60 ثانية</button>
+            <button data-v="30">30 ثانية</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card summary">
+      <div class="txt" id="summary"></div>
+      <button class="btn btn-gold btn-lg" id="startBtn">🚀 انطلقوا إلى المغامرة!</button>
+    </div>
+  </section>
+
+  <!-- ================= MAP ================= -->
+  <section class="screen" id="screen-map">
+    <div class="topbar">
+      <button class="btn btn-ghost icon-btn" data-quit aria-label="القائمة">☰</button>
+      <div class="ttl">🗺️ خريطة الكنز</div>
+      <span style="width:44px"></span>
+    </div>
+    <div class="map-wrap" id="mapBox"></div>
+    <div class="card" style="margin-top:16px">
+      <p class="story" id="storyText" style="margin-top:0"></p>
+      <div class="stage-card">
+        <div class="big" id="stIcon"></div>
+        <div style="flex:1">
+          <div class="muted" id="stNum" style="font-weight:700"></div>
+          <h2 id="stName"></h2>
+          <div class="muted" id="stDesc"></div>
+        </div>
+      </div>
+      <div id="orderBox" style="margin-top:14px"></div>
+      <div style="text-align:center; margin-top:16px">
+        <button class="btn btn-gold btn-lg" id="goStage">⚔️ ابدأ التحدي</button>
+      </div>
+    </div>
+    <div class="card" id="mapBoard"></div>
+  </section>
+
+  <!-- ================= QUESTION ================= -->
+  <section class="screen" id="screen-play">
+    <div class="topbar">
+      <button class="btn btn-ghost icon-btn" data-quit aria-label="القائمة">☰</button>
+      <div class="ttl" id="playTitle"></div>
+      <span class="badge" id="playCount"></span>
+    </div>
+    <div class="progress"><i id="playProg"></i></div>
+    <div class="turn" id="turn"></div>
+    <div class="card qcard" id="qcard"></div>
+    <div class="card" id="playBoard"></div>
+  </section>
+
+  <!-- ================= STAGE CLEAR ================= -->
+  <section class="screen" id="screen-clear">
+    <div class="card center" style="padding:28px 18px">
+      <div class="burst" id="clrIcon"></div>
+      <h2 id="clrTitle" style="font-size:1.8rem; margin-top:8px"></h2>
+      <p class="muted" id="clrText"></p>
+      <div class="pieces" id="clrPieces"></div>
+      <div class="stat-pills" id="clrStats" style="justify-content:center"></div>
+      <div style="margin-top:20px"><button class="btn btn-gold btn-lg" id="clrNext"></button></div>
+    </div>
+  </section>
+
+  <!-- ================= FINAL ================= -->
+  <section class="screen" id="screen-final">
+    <div class="card center" style="padding:24px 16px; overflow:hidden">
+      <h2 id="finTitle" style="font-size:1.7rem">💎 وصلتم إلى بوابة الكنز!</h2>
+      <p class="muted" id="finSub" style="margin:6px 0 0"></p>
+      <div class="chest-stage" id="chestStage">
+        <div class="rays"></div>
+        <div class="chest">
+          <div class="glow"></div>
+          <div class="lid"></div>
+          <div class="base"><div class="lock"></div></div>
+        </div>
+        <div id="lootBox"></div>
+      </div>
+      <button class="btn btn-gold btn-lg" id="openChest">🔓 افتحوا الكنز!</button>
+      <div id="results" class="hidden"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+'use strict';
+/* =========================================================
+   Helpers
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* =========================================================
+   Constants
+   ========================================================= */
+const DEFAULT_NAMES = ['أماني','جد','مريم','ميمي','مرام','يمنى','ميس','سارة','رزان','جنى','رؤى','محمود','صبا','احمد'];
+const AVATARS = ['🦁','🦊','🐼','🦄','🐙','🦉','🐬','🦋','🐢','🐯','🐨','🦜','🐳','🐲','🐧','🦈','🐝','🐸','🦩','🐿️'];
+const COLORS = ['#ff8fab','#7bdff2','#b2f7ef','#f7d6e0','#ffd166','#a0c4ff','#caffbf','#ffadad','#bdb2ff','#fdffb6','#9bf6ff','#ffc6ff','#ffb703','#8ecae6','#90e0ef','#e9c46a','#f4a261','#c3f0ca','#d0b8ff','#ffcad4'];
+const LEVELS = { easy:{label:'سهل', icon:'🟢'}, medium:{label:'متوسط', icon:'🟡'}, hard:{label:'صعب', icon:'🔴'} };
+const LEVEL_ORDER = ['easy','medium','hard'];
+const CATS = {
+  riddle:{label:'لغز', icon:'🧩'}, number:{label:'ألغاز الأرقام', icon:'🔢'}, word:{label:'ألعاب الكلمات', icon:'🔤'},
+  pattern:{label:'الأنماط', icon:'🔷'}, knowledge:{label:'معلومات عامة', icon:'🌍'}
+};
+const STAGES = [
+  {name:'شاطئ الألغاز', icon:'🏝️', cat:'riddle', desc:'ألغاز ذكية تحتاج إلى عقل يقظ وخيال واسع.',
+   story:'وجدتم زجاجة قديمة على الشاطئ، وفي داخلها خريطة ممزقة! أول قطعة منها يحرسها حارس الألغاز…'},
+  {name:'غابة الأرقام', icon:'🌴', cat:'number', desc:'حسابات وألغاز رقمية تفتح الطريق بين الأشجار.',
+   story:'الطريق يدخل غابة كثيفة، وعلى كل شجرة رقم غامض. حلّوا الألغاز الرقمية لتجدوا الممر الصحيح!'},
+  {name:'كهف الحروف', icon:'🗿', cat:'word', desc:'كلمات مبعثرة ومعانٍ ومرادفات وأمثال.',
+   story:'في عمق الجبل كهف مظلم، جدرانه مليئة بحروف متناثرة. رتّبوا الكلمات لتضيء المشاعل!'},
+  {name:'معبد الأنماط', icon:'🏛️', cat:'pattern', desc:'أعداد ورموز وحروف تسير بنظام سري.',
+   story:'أمامكم معبد قديم، أبوابه لا تُفتح إلا لمن يكتشف النمط المخفي في النقوش.'},
+  {name:'جبل المعرفة', icon:'🌋', cat:'knowledge', desc:'أسئلة معلومات عامة من العلوم والجغرافيا والتاريخ.',
+   story:'المحطة الأخيرة! على قمة الجبل حكيم عجوز لن يسلّمكم مفتاح الكنز إلا بعد أسئلته.'}
+];
+const PROGRESSIVE = ['easy','easy','medium','medium','hard'];
+const PTS = 10, HINT_PTS = 5, STREAK_BONUS = 5;
+
+const PRAISE = ['إجابة صحيحة! 🎉','رائع جداً! 🌟','ضربة معلّم! 💥','عبقرية! 🧠','إجابة ذهبية! 🏅','ممتاز! 🚀','هذا هو الذكاء! ✨'];
+const COMFORT = ['ليست هذه المرة! 💪','قريبة! المغامرة مستمرة 🧭','لا بأس، الأبطال يتعلّمون 🌱','محاولة جميلة! 🙌'];
+const MEDAL_BY_CAT = { riddle:'🧩 وسام الألغاز', number:'🔢 وسام الأرقام', word:'🔤 وسام الكلمات', pattern:'🔷 وسام الأنماط', knowledge:'🌍 وسام المعرفة' };
+
+/* =========================================================
+   Question bank
+   ========================================================= */
+const BANK = [];
+let bankSeq = 0;
+function add(cat, level, q, answer, wrongs, hint, ex, seq){
+  BANK.push({ id:cat[0]+(++bankSeq), cat, level, q, answer:String(answer), wrongs:wrongs.map(String), hint:hint||'', ex:ex||'', seq:seq||null });
+}
+const R=(l,q,a,w,h,e)=>add('riddle',l,q,a,w,h,e);
+const K=(l,q,a,w,h,e)=>add('knowledge',l,q,a,w,h,e);
+const W=(l,q,a,w,h,e)=>add('word',l,q,a,w,h,e);
+const N=(l,q,a,w,h,e)=>add('number',l,q,a,w,h,e);
+const P=(l,seq,a,w,h,e)=>add('pattern',l,'ما الذي يأتي بعد ذلك؟',a,w,h,e,seq);
+
+// ---- Riddles
+R('easy','ما الشيء الذي له أسنان كثيرة لكنه لا يعضّ؟','المشط',['المقص','التمساح','المفتاح'],'نستخدمه كل صباح لترتيب الشعر.');
+R('easy','ما الشيء الذي يكتب ولا يقرأ؟','القلم',['الكتاب','الدفتر','المعلّم'],'تجده في حقيبة المدرسة.');
+R('easy','ما الشيء الذي له عين واحدة ولا يرى؟','الإبرة',['القرصان','الإعصار','الكاميرا'],'نستخدمه في الخياطة.');
+R('easy','بيت بلا أبواب ولا نوافذ، إذا خرج ساكنه كسره. ما هو؟','البيضة',['الخيمة','العلبة','الكهف'],'يخرج منه كتكوت صغير.');
+R('easy','يسمع بلا أذن، ويتكلم بلا لسان. ما هو؟','الهاتف',['الكتاب','الببغاء','المرآة'],'نتصل به بالأهل والأصدقاء.');
+R('easy','ما الشيء الذي له أربع أرجل لكنه لا يمشي؟','الكرسي',['الحصان','السلحفاة','القطة'],'نجلس عليه.');
+R('easy','له رقبة وليس له رأس. ما هو؟','الزجاجة',['الزرافة','الوردة','البطة'],'نشرب منها الماء.');
+R('easy','يجري طوال الوقت ولا يمشي أبداً. ما هو؟','النهر',['الحصان','القطار','الأرنب'],'ماء عذب يجري بين ضفّتين.');
+R('easy','شيء نأكل فيه كل يوم لكننا لا نأكله. ما هو؟','الصحن',['الخبز','الأرز','التفاح'],'تجده على مائدة الطعام.');
+R('easy','يمشي بلا أرجل، ويبكي بلا عيون. ما هو؟','السحاب',['الثعبان','النهر','الطفل'],'تراه في السماء، ودموعه مطر.');
+R('easy','ما الشيء الذي إذا لمسته صاح؟','الجرس',['القطة','البالون','الكتاب'],'تجده عند باب البيت.');
+R('medium','شيء تراه في الليل ثلاث مرات، وفي النهار مرة واحدة. ما هو؟','حرف اللام',['القمر','النجوم','حرف النون'],'فكّر في حروف الكلمتين نفسيهما!','كلمة «الليل» فيها ثلاث لامات، و«النهار» فيها لام واحدة.');
+R('medium','ما الذي يتكلم بكل لغات العالم دون أن يتعلّمها؟','الصدى',['الببغاء','المترجم','الراديو'],'تسمعه في الجبال والكهوف.','الصدى يردّد أي كلمة بأي لغة.');
+R('medium','له أوراق وليس نباتاً، وله جلد وليس حيواناً. ما هو؟','الكتاب',['الشجرة','الحقيبة','الحذاء'],'نقرأ فيه.','للكتاب أوراق وغلاف من الجلد.');
+R('medium','أخضر في الأرض، وأسود في السوق، وأحمر في البيت. ما هو؟','الشاي',['البطيخ','الفلفل','العنب'],'مشروب ساخن تحبه العائلة.','أوراقه خضراء، ويُباع أسود مجففاً، ويصبح أحمر عند تحضيره.');
+R('medium','أخت خالك وليست خالتك. من تكون؟','أمك',['عمتك','جدتك','أختك'],'الخال هو أخو…','أخت خالك هي أمك.');
+R('medium','تحمله ويحملك. ما هو؟','الحذاء',['الحقيبة','الكرسي','السرير'],'تلبسه في قدميك.','تحمله بيدك أحياناً، ويحملك وأنت تمشي.');
+R('medium','لا يعمل إلا إذا ضربته على رأسه. ما هو؟','المسمار',['الباب','الجرس','الكرة'],'يستخدمه النجّار مع المطرقة.');
+R('medium','حيوان يطير، ويلد صغاره ولا يبيض. ما هو؟','الخفاش',['النسر','النعامة','البطريق'],'ينام مقلوباً في النهار.','الخفاش من الثدييات مع أنه يطير.');
+R('medium','ما الشيء الذي كلما أخذت منه كبر؟','الحفرة',['البالون','الكعكة','الكيس'],'تصنعها بالمجرفة.','كلما أخذت من ترابها أصبحت أكبر.');
+R('medium','يقرصك ولا تراه. ما هو؟','الجوع',['البعوض','القطة','النمل'],'يختفي بعد وجبة لذيذة.');
+R('medium','يرتفع دائماً ولا ينزل أبداً. ما هو؟','العمر',['المصعد','الطائرة','البالون'],'يزيد مع كل عيد ميلاد.');
+R('hard','إذا أكلته كله استفدت، وإذا أكلت نصفه متّ! ما هو؟','السمسم',['العسل','الفطر','الثوم'],'انظر إلى نصف اسمه!','نصف كلمة «سمسم» هو «سم».');
+R('hard','ما الشيء الموجود في وسط مكة؟','حرف الكاف',['الكعبة','زمزم','حرف الميم'],'لا تفكّر في المكان، بل في الكلمة!','كلمة «مكة»: م - ك - ة، والكاف في وسطها.');
+R('hard','فيّ مدن بلا بيوت، وأنهار بلا ماء، وغابات بلا أشجار. ما أنا؟','الخريطة',['الحلم','الصحراء','اللوحة'],'نحتاجها في هذه المغامرة!');
+R('hard','أنا ابن الماء، فإن تركوني في الماء متّ. من أنا؟','الثلج',['السمك','الصدف','الغيم'],'يذوب إذا وُضع في الماء.');
+R('hard','كلما اقتربت منه ابتعد عنك، تراه ولا تصل إليه أبداً. ما هو؟','الأفق',['القمر','الظل','الجبل'],'حيث تبدو السماء ملتقية بالأرض.');
+R('hard','يكسو الناس وهو عارٍ. ما هو؟','الإبرة',['الخيّاط','القطن','الخروف'],'أداة صغيرة جداً في علبة الخياطة.');
+R('hard','يدخل الماء ولا يبتلّ أبداً. ما هو؟','الظل',['السمكة','الصابون','الغوّاص'],'يتبعك في الشمس.');
+R('hard','أمامك دائماً لكنك لا تستطيع رؤيته. ما هو؟','المستقبل',['الطريق','أنفك','الماضي'],'يأتي بعد اليوم.');
+R('hard','إذا نطقت باسمي كسرتني. من أنا؟','الصمت',['الزجاج','الصوت','الوعد'],'عكس الكلام.','بمجرد أن تقول «صمت» تكون قد كسرت الصمت!');
+R('hard','ابن أبيك وابن أمك، وليس أخاك. من هو؟','أنت',['ابن عمك','خالك','جدك'],'انظر في المرآة!');
+
+// ---- General knowledge
+K('easy','ما الكوكب الذي يُلقّب بالكوكب الأحمر؟','المريخ',['الأرض','زحل','عطارد'],'سُمّي بلونه بسبب الصدأ في صخوره.');
+K('easy','كم يوماً في السنة الميلادية العادية؟','365',['360','366','350'],'السنة الكبيسة فيها يوم زائد.');
+K('easy','ما عاصمة مصر؟','القاهرة',['الإسكندرية','الجيزة','أسوان'],'يمرّ بها نهر النيل.');
+K('easy','ما أسرع حيوان برّي في العالم؟','الفهد',['الأسد','الحصان','الغزال'],'جلده مرقّط.');
+K('easy','ما الحيوان الملقّب بسفينة الصحراء؟','الجمل',['الحصان','الفيل','الحمار'],'له سنام.');
+K('easy','كم عدد أرجل العنكبوت؟','8',['6','4','10'],'أكثر من أرجل الحشرات.','للعنكبوت 8 أرجل، أما الحشرات فلها 6.');
+K('easy','ما الغاز الذي نحتاجه للتنفّس؟','الأكسجين',['ثاني أكسيد الكربون','الهيليوم','النيتروجين'],'تطلقه النباتات.');
+K('easy','في أي فصل تتساقط أوراق كثير من الأشجار؟','الخريف',['الربيع','الصيف','الشتاء'],'يأتي بعد الصيف.');
+K('easy','كم عدد قارات العالم؟','7',['5','6','8'],'منها آسيا وأفريقيا وأوروبا…');
+K('easy','كم لوناً في قوس قزح؟','7',['5','6','9'],'العدد نفسه لأيام الأسبوع.');
+K('easy','ما أكبر حيوان على وجه الأرض؟','الحوت الأزرق',['الفيل','الزرافة','القرش الأبيض'],'يعيش في المحيط.');
+K('medium','ما أكبر كوكب في المجموعة الشمسية؟','المشتري',['زحل','الأرض','نبتون'],'كوكب غازي فيه بقعة حمراء عظيمة.');
+K('medium','ما أطول نهر في العالم بحسب أغلب المصادر؟','النيل',['الأمازون','الفرات','المسيسيبي'],'يمرّ بالسودان ومصر.');
+K('medium','ما عاصمة اليابان؟','طوكيو',['بكين','سيول','أوساكا'],'من أكبر مدن العالم سكاناً.');
+K('medium','ما أكبر عضو في جسم الإنسان؟','الجلد',['الكبد','القلب','الدماغ'],'يغطي الجسم كله!');
+K('medium','كم عدد لاعبي فريق كرة القدم داخل الملعب؟','11',['9','10','12'],'بمن فيهم حارس المرمى.');
+K('medium','ما المعدن الذي يكون سائلاً في درجة حرارة الغرفة؟','الزئبق',['الحديد','النحاس','الألمنيوم'],'كان يُستخدم في موازين الحرارة القديمة.');
+K('medium','ما أعلى جبل في العالم؟','إيفرست',['كليمنجارو','مون بلان','جبل طارق'],'يقع في سلسلة جبال الهيمالايا.');
+K('medium','عند كم درجة مئوية يغلي الماء عند مستوى سطح البحر؟','100',['50','90','120'],'عدد من ثلاث خانات.');
+K('medium','كم عدد كواكب المجموعة الشمسية؟','8',['7','9','10'],'كان بلوتو يُعدّ منها سابقاً.');
+K('medium','كم حرفاً في الأبجدية العربية؟','28',['26','29','30'],'من الألف إلى الياء.');
+K('medium','ما أصغر قارة في العالم؟','أستراليا',['أوروبا','أفريقيا','أمريكا الجنوبية'],'يعيش فيها حيوان الكنغر.');
+K('hard','ما الرمز الكيميائي للذهب؟','Au',['Ag','Go','Gd'],'الرمز Ag هو للفضة، وليس للذهب.','الرمز Au مأخوذ من الاسم اللاتيني Aurum.');
+K('hard','ما أصغر دولة في العالم مساحةً؟','الفاتيكان',['موناكو','البحرين','سنغافورة'],'تقع داخل مدينة روما.');
+K('hard','في أي عام هبط الإنسان على سطح القمر لأول مرة؟','1969',['1959','1975','1981'],'في أواخر الستينيات.');
+K('hard','ما عاصمة كندا؟','أوتاوا',['تورنتو','مونتريال','فانكوفر'],'ليست أكبر مدنها.');
+K('hard','من مؤلف كتاب «القانون في الطب»؟','ابن سينا',['ابن خلدون','الخوارزمي','ابن بطوطة'],'لُقّب بالشيخ الرئيس.');
+K('hard','كم يستغرق ضوء الشمس تقريباً ليصل إلى الأرض؟','8 دقائق',['8 ثوانٍ','ساعة واحدة','يوم كامل'],'أكثر من دقيقة وأقل من ربع ساعة.');
+K('hard','ما أعمق نقطة معروفة في محيطات العالم؟','خندق ماريانا',['مثلث برمودا','البحر الميت','خليج المكسيك'],'تقع في المحيط الهادئ.');
+K('hard','من العالِم الذي وضع أسس علم الجبر؟','الخوارزمي',['ابن الهيثم','البيروني','الفارابي'],'كلمة «خوارزمية» مشتقة من اسمه.');
+K('hard','ما أكثر غاز موجود في الغلاف الجوي للأرض؟','النيتروجين',['الأكسجين','ثاني أكسيد الكربون','الهيدروجين'],'نسبته نحو 78%.');
+K('hard','ما عاصمة أستراليا؟','كانبرا',['سيدني','ملبورن','بيرث'],'ليست سيدني!');
+K('hard','من العالِم الذي يُعدّ رائد علم البصريات ومؤلف «كتاب المناظر»؟','ابن الهيثم',['ابن رشد','جابر بن حيان','الرازي'],'شرح كيف نرى الأشياء بانعكاس الضوء.');
+
+// ---- Words
+W('easy','ما عكس كلمة «طويل»؟','قصير',['كبير','عريض','سريع'],'فكّر في الطول.');
+W('easy','ما جمع كلمة «قلم»؟','أقلام',['قلمات','قلوم','قلمون'],'يبدأ بالهمزة.');
+W('easy','أي كلمة لا تنتمي إلى المجموعة؟ (تفاح، موز، جزر، برتقال)','جزر',['تفاح','موز','برتقال'],'ثلاث منها فواكه.','الجزر من الخضراوات.');
+W('easy','ما مرادف كلمة «سعيد»؟','فرحان',['حزين','غاضب','نعسان'],'شعور جميل.');
+W('easy','أي كلمة لا تنتمي إلى المجموعة؟ (أسد، نمر، حمامة، فهد)','حمامة',['أسد','نمر','فهد'],'ثلاثة منها حيوانات مفترسة.','الحمامة طائر، والبقية من فصيلة القطط.');
+W('easy','ما عكس كلمة «ليل»؟','نهار',['قمر','نوم','ظلام'],'وقت شروق الشمس.');
+W('easy','ما جمع كلمة «كتاب»؟','كتب',['كتابات','كتوب','أكتاب'],'جمع تكسير قصير.');
+W('easy','ما عكس كلمة «ساخن»؟','بارد',['دافئ','حار','جاف'],'مثل الثلج.');
+W('easy','صوت القطة يُسمّى…','مواء',['نباح','زئير','صهيل'],'«مياو»!');
+W('easy','ما الحرف الناقص في كلمة «م_رسة» (مكان التعلّم)؟','د',['ك','ح','ج'],'نذهب إليها صباحاً.');
+W('medium','ما مرادف كلمة «الغيث»؟','المطر',['الريح','الثلج','الرعد'],'ينزل من السحاب.');
+W('medium','ما عكس كلمة «بخيل»؟','كريم',['فقير','غني','ذكي'],'صفة حاتم الطائي.');
+W('medium','ما مفرد كلمة «أنهار»؟','نهر',['نهار','منهر','أنهر'],'ماء يجري.');
+W('medium','أي كلمة لا تنتمي إلى المجموعة؟ (عطارد، الزهرة، القمر، المريخ)','القمر',['عطارد','الزهرة','المريخ'],'ثلاثة منها كواكب.','القمر تابع يدور حول الأرض وليس كوكباً.');
+W('medium','أكمل المثل: «الصديق وقت…»','الضيق',['الفرح','الصباح','اللعب'],'الصديق الحقيقي يظهر في الشدّة.');
+W('medium','أي كلمة تُقرأ بالشكل نفسه من اليمين ومن اليسار؟','باب',['بيت','قلم','شمس'],'جرّب قراءة كل كلمة بالعكس.','«باب» بالعكس تبقى «باب».');
+W('medium','أكمل المثل: «إذا كان الكلام من فضة، فالسكوت من…»','ذهب',['حديد','نحاس','ماس'],'معدن أغلى من الفضة.');
+W('medium','صوت الأسد يُسمّى…','زئير',['نهيق','عواء','خوار'],'صوت قوي يُرعب الغابة.');
+W('medium','بيت النحل يُسمّى…','خلية',['عش','جحر','وكر'],'فيها العسل.');
+W('medium','ما جمع كلمة «مدينة»؟','مدن',['مدينات','مدونة','أمدنة'],'كلمة قصيرة من ثلاثة أحرف.');
+W('medium','ما مرادف كلمة «شجاع»؟','مقدام',['جبان','خجول','كسول'],'لا يخاف التقدّم.');
+W('hard','ما معنى كلمة «الهِزَبْر»؟','الأسد',['النسر','الحصان','الذئب'],'من أسماء ملك الغابة.');
+W('hard','ما معنى كلمة «اليَراع»؟','القلم',['السيف','الكتاب','الحبر'],'أداة الكاتب قديماً.');
+W('hard','أكمل الحكمة: «مَن جدّ…»','وجد',['نجح','سهر','ربح'],'«ومن زرع حصد».');
+W('hard','ما جمع كلمة «رسالة» جمعَ تكسير؟','رسائل',['رسول','مراسل','أرسال'],'على وزن «فعائل».');
+W('hard','ما مؤنث كلمة «ديك»؟','دجاجة',['ديكة','بطة','حمامة'],'تبيض لنا كل صباح.');
+W('hard','صغير الأسد يُسمّى…','شبل',['جرو','مهر','حمل'],'يبدأ بحرف الشين.');
+W('hard','صوت الحصان يُسمّى…','صهيل',['خوار','ثغاء','نقيق'],'يبدأ بحرف الصاد.');
+W('hard','صغير الحمار يُسمّى…','جحش',['عجل','فصيل','حوار'],'يبدأ بحرف الجيم.');
+W('hard','ما مثنّى كلمة «عين» في حالة الرفع؟','عينان',['عينين','عيون','أعين'],'المثنّى المرفوع ينتهي بـ«ان».');
+W('hard','ما عكس كلمة «الحِلْم» (بكسر الحاء)؟','الغضب',['النوم','الذكاء','الصبر'],'الحِلم هو الهدوء وضبط النفس.');
+W('hard','ما معنى كلمة «السَّغَب»؟','الجوع',['العطش','التعب','الخوف'],'ورد في القرآن: «في يومٍ ذي مسغبة».');
+
+// ---- Numbers (hand-written brain teasers)
+N('easy','كم يوماً في 3 أسابيع؟','21',['18','24','14'],'في الأسبوع 7 أيام.','3 × 7 = 21');
+N('easy','كم ساقاً لثلاث دجاجات؟','6',['3','9','12'],'لكل دجاجة ساقان.','3 × 2 = 6');
+N('easy','كم دقيقة في ساعة ونصف؟','90',['60','80','150'],'الساعة 60 دقيقة، ونصفها 30.','60 + 30 = 90');
+N('medium','عائلة فيها 4 إخوة، ولكل أخ منهم أخت واحدة. كم عدد الأبناء في العائلة؟','5',['8','6','4'],'هل الأخت نفسها لكل الإخوة؟','الأخت نفسها مشتركة: 4 إخوة + أخت واحدة = 5.');
+N('medium','كم دقيقة في ساعتين ونصف؟','150',['120','130','250'],'الساعة 60 دقيقة.','60 + 60 + 30 = 150');
+N('medium','حبل طوله 12 متراً، نريد قصّه إلى قطع طول كل منها 3 أمتار. كم قصّة نحتاج؟','3',['4','2','12'],'عدد القطع ليس هو عدد القصّات!','ينتج 4 قطع، لكنها تحتاج 3 قصّات فقط.');
+N('hard','إذا اصطادت 5 قطط 5 فئران في 5 دقائق، فكم قطة نحتاج لاصطياد 100 فأر في 100 دقيقة؟','5',['100','20','25'],'كم فأراً يصطاد القط الواحد في 5 دقائق؟','كل قطة تصطاد فأراً كل 5 دقائق، أي 20 فأراً في 100 دقيقة، فنحتاج 5 قطط فقط.');
+N('hard','مضرب وكرة ثمنهما معاً 110 قطع ذهبية، والمضرب أغلى من الكرة بـ100 قطعة. كم ثمن الكرة؟','5',['10','15','1'],'الإجابة السريعة ليست دائماً صحيحة!','الكرة 5 والمضرب 105، والمجموع 110.');
+N('hard','كم مرة يظهر الرقم 1 عند كتابة الأعداد من 1 إلى 20؟','12',['11','10','2'],'لا تنسَ أن العدد 11 فيه رقمان!','1، 10، 11 (مرتان)، ثم 12 إلى 19 (8 مرات) = 12 مرة.');
+N('hard','عمر أحد الإخوة ضعف عمر أخيه الأصغر، وبعد 10 سنوات سيصبح مجموع عمريهما 50. كم عمر الأخ الأكبر الآن؟','20',['15','25','30'],'مجموع عمريهما الآن = 50 − 20.','المجموع الآن 30، والأكبر ضعف الأصغر: 20 و10.');
+
+// ---- Patterns (hand-written)
+P('easy',['الأحد','الاثنين','الثلاثاء'],'الأربعاء',['الخميس','السبت','الجمعة'],'أيام الأسبوع بالترتيب.');
+P('medium',['السبت','الاثنين','الأربعاء'],'الجمعة',['الخميس','الأحد','الثلاثاء'],'نتخطّى يوماً في كل مرة.','نقفز يوماً: السبت (الأحد) الاثنين (الثلاثاء) الأربعاء (الخميس) الجمعة.');
+P('medium',['1','4','9','16'],'25',['20','24','32'],'1×1، 2×2، 3×3…','5 × 5 = 25');
+P('hard',['يناير','مارس','مايو'],'يوليو',['يونيو','أغسطس','أبريل'],'نتخطّى شهراً في كل مرة.','يناير (فبراير) مارس (أبريل) مايو (يونيو) يوليو.');
+P('hard',['2','3','5','7','11'],'13',['12','15','14'],'هذه الأعداد لا تقبل القسمة إلا على 1 وعلى نفسها.','إنها الأعداد الأولية، والتالي هو 13.');
+P('hard',['1','8','27','64'],'125',['100','81','128'],'1×1×1، 2×2×2…','5 × 5 × 5 = 125');
+
+/* ---- Scramble words */
+const SCRAMBLE = {
+  easy:[['قمر','يضيء السماء ليلاً'],['شمس','تضيء النهار'],['بحر','ماء مالح واسع'],['كتاب','نقرأ فيه'],['وردة','لها رائحة جميلة'],['سمكة','تعيش في الماء'],['نجمة','تلمع في السماء'],['كنز','نبحث عنه اليوم!'],['أسد','ملك الغابة'],['موز','فاكهة صفراء'],['قلم','نكتب به'],['بيت','نسكن فيه']],
+  medium:[['مدرسة','مكان التعلّم'],['فراشة','حشرة بأجنحة ملوّنة'],['سفينة','تبحر في البحر'],['طائرة','تطير بالركاب'],['حديقة','فيها أشجار وورود'],['خريطة','دليل الوصول إلى الكنز'],['قرصان','بحّار يبحث عن الكنوز'],['بوصلة','تدلّك على الاتجاه'],['مفتاح','يفتح الأبواب'],['زرافة','أطول الحيوانات'],['دلفين','حيوان بحري ذكي'],['جزيرة','أرض يحيط بها الماء']],
+  hard:[['مغامرة','رحلة مليئة بالمفاجآت'],['ديناصور','زواحف عملاقة انقرضت'],['تلسكوب','نرى به النجوم البعيدة'],['بركان','جبل يقذف الحمم'],['أخطبوط','له ثمانية أذرع'],['فراولة','فاكهة حمراء صغيرة'],['كهرباء','تشغّل الأجهزة'],['عنكبوت','ينسج بيته من الخيوط'],['بطريق','طائر لا يطير يعيش في البرد'],['مستشفى','مكان علاج المرضى'],['برتقال','فاكهة اسمها لون أيضاً'],['مكتبة','مكان مليء بالكتب']]
+};
+
+/* =========================================================
+   Generators
+   ========================================================= */
+function numOptions(ans){
+  const set = new Set(); let guard = 0;
+  const spread = Math.max(3, Math.round(Math.abs(ans)*0.15));
+  while(set.size < 3 && guard++ < 200){
+    const d = Math.random() < .5 ? pick([-10,-5,-2,-1,1,2,5,10]) : rnd(-spread, spread);
+    const v = ans + d;
+    if(v >= 0 && v !== ans) set.add(v);
+  }
+  let k = 1; while(set.size < 3){ if(ans+k !== ans) set.add(ans+k); k++; }
+  return shuffle([ans, ...set]).map(String);
+}
+function mc(cat, q, answer, options, hint, ex, seq){
+  return { cat, type:'mc', q, answer:String(answer), options, hint, ex, seq:seq||null, key:cat+'|'+q+'|'+(seq?seq.join(','):'') };
+}
+function numQ(q, ans, hint, ex){ return mc('number', q, ans, numOptions(ans), hint, ex); }
+
+function otherName(pid){
+  const others = G.ids.filter(id => id !== pid);
+  const p = getPlayer(others.length ? pick(others) : pid);
+  return p ? p.name : 'القبطان';
+}
+
+const NUM_GEN = {
+  easy:[
+    () => { const a=rnd(8,45), b=rnd(5,40); return numQ(`${a} + ${b} = ؟`, a+b, 'اجمع العشرات أولاً، ثم الآحاد.', `${a} + ${b} = ${a+b}`); },
+    () => { const a=rnd(20,70), b=rnd(4,a-5); return numQ(`${a} − ${b} = ؟`, a-b, 'ابدأ من العدد الأصغر وعُدّ صعوداً حتى الأكبر.', `${a} − ${b} = ${a-b}`); },
+    () => { const a=rnd(2,5), b=rnd(2,10); return numQ(`${a} × ${b} = ؟`, a*b, `يعني جمع العدد ${b} مع نفسه ${a} مرات.`, `${a} × ${b} = ${a*b}`); },
+    pid => { const a=rnd(12,30), b=rnd(3,a-4); return numQ(`سؤال من ${otherName(pid)}: «وجدتُ ${a} من القطع الذهبية، ثم أنفقتُ ${b} منها. كم قطعة بقيت معي؟»`, a-b, 'هذه مسألة طرح.', `${a} − ${b} = ${a-b}`); },
+    () => { const a=rnd(6,25); return numQ(`ما ضِعف العدد ${a}؟`, a*2, 'الضِّعف يعني أن تجمع العدد مع نفسه.', `${a} + ${a} = ${a*2}`); },
+    () => { const b=rnd(3,6), c=rnd(3,6); return numQ(`في الكهف ${b} من الصناديق، وفي كل صندوق ${c} من الجواهر. كم جوهرة في الكهف؟`, b*c, 'كرّر الجمع أو استخدم الضرب.', `${b} × ${c} = ${b*c}`); }
+  ],
+  medium:[
+    () => { const a=rnd(6,12), b=rnd(3,12); return numQ(`${a} × ${b} = ؟`, a*b, 'تذكّر جدول الضرب.', `${a} × ${b} = ${a*b}`); },
+    () => { const b=rnd(3,9), q=rnd(3,12); return numQ(`${b*q} ÷ ${b} = ؟`, q, `أي عدد إذا ضربناه في ${b} أعطانا ${b*q}؟`, `${q} × ${b} = ${b*q}`); },
+    () => { const x=rnd(3,12), b=rnd(3,9); return numQ(`؟ × ${b} = ${x*b}`, x, 'استخدم القسمة لتجد العدد المجهول.', `${x*b} ÷ ${b} = ${x}`); },
+    () => { const a=rnd(2,9), b=rnd(2,9), c=rnd(2,5); return numQ(`(${a} + ${b}) × ${c} = ؟`, (a+b)*c, 'احسب ما بين القوسين أولاً.', `${a+b} × ${c} = ${(a+b)*c}`); },
+    () => { const k=rnd(3,25); return numQ(`ما ربع العدد ${k*4}؟`, k, 'الربع يعني القسمة على 4 (نصف النصف).', `${k*4} ÷ 4 = ${k}`); },
+    pid => { const n=rnd(3,8), k=rnd(3,9); return numQ(`سؤال من ${otherName(pid)}: «معي ${n*k} من الحلوى، وأريد توزيعها بالتساوي على ${n} من الأصدقاء. كم حلوى يأخذ كل واحد؟»`, k, 'هذه مسألة قسمة.', `${n*k} ÷ ${n} = ${k}`); }
+  ],
+  hard:[
+    () => { const a=rnd(5,30), b=rnd(3,12), c=rnd(3,12), d=rnd(2,a); return numQ(`${a} + ${b} × ${c} − ${d} = ؟`, a+b*c-d, 'الضرب قبل الجمع والطرح!', `${b} × ${c} = ${b*c}، ثم ${a} + ${b*c} − ${d} = ${a+b*c-d}`); },
+    () => { const p=pick([10,20,25,50,75]); const m={10:10,20:5,25:4,50:2,75:4}[p]; const base=m*rnd(3,25); return numQ(`كم يساوي ${p}% من ${base}؟`, base*p/100, '10% تعني قسمة العدد على 10.', `${base} × ${p} ÷ 100 = ${base*p/100}`); },
+    () => { const a=rnd(11,20); return numQ(`${a} × ${a} = ؟`, a*a, `جرّب: ${a} × 10 ثم أضف ${a} × ${a-10}.`, `${a}² = ${a*a}`); },
+    () => { const a=rnd(6,15); return numQ(`ما الجذر التربيعي للعدد ${a*a}؟`, a, 'أي عدد إذا ضربته في نفسه أعطاك هذا الناتج؟', `${a} × ${a} = ${a*a}`); },
+    () => { const x=rnd(3,15), a=rnd(2,9), b=rnd(1,20); return numQ(`عدد سرّي، إذا ضربناه في ${a} ثم أضفنا ${b} كان الناتج ${a*x+b}. ما العدد؟`, x, `اطرح ${b} أولاً، ثم اقسم على ${a}.`, `(${a*x+b} − ${b}) ÷ ${a} = ${x}`); },
+    () => { const p=rnd(3,8), k=rnd(6,15), e=rnd(2,9); return numQ(`قسّم القبطان ${p*k} من القطع الذهبية بالتساوي على ${p} من القراصنة، ثم وجد كل قرصان ${e} قطع إضافية. كم قطعة أصبحت مع كل قرصان؟`, k+e, 'اقسم أولاً، ثم أضف.', `${p*k} ÷ ${p} = ${k}، ثم ${k} + ${e} = ${k+e}`); }
+  ]
+};
+
+const ALPHA = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
+const EMOJI_SETS = [['🍎','🍌','🍇','🍓','🥝'],['⭐','🌙','☀️','☁️','⚡'],['🔴','🟢','🔵','🟡','🟣'],['🐱','🐶','🐰','🐻','🐼'],['💎','🪙','👑','🗝️','🧭']];
+const ARROWS = ['⬆️','➡️','⬇️','⬅️'];
+
+function seqQ(items, answer, wrongPool, hint, ex){
+  const wrongs = shuffle([...new Set(wrongPool.map(String))].filter(w => w !== String(answer))).slice(0,3);
+  return mc('pattern', 'ما الذي يكمل النمط؟', answer, shuffle([String(answer), ...wrongs]), hint, ex, [...items.map(String), '؟']);
+}
+function numSeqQ(terms, hint, ex){
+  const shown = terms.slice(0,-1), ans = terms[terms.length-1];
+  const pool = numOptions(ans).filter(v => v !== String(ans));
+  return seqQ(shown, ans, pool, hint, ex);
+}
+function emojiQ(unitPattern){
+  const set = shuffle(pick(EMOJI_SETS));
+  const unit = unitPattern.split('').map(ch => set[ch.charCodeAt(0)-65]);
+  const len = unit.length * 2 + rnd(0, unit.length-1);
+  const items = Array.from({length:len}, (_,i) => unit[i % unit.length]);
+  const ans = unit[len % unit.length];
+  return seqQ(items, ans, set, 'ابحث عن المجموعة التي تتكرر.', `النمط يتكرر هكذا: ${unit.join(' ')}`);
+}
+function letterQ(step, count){
+  const start = rnd(0, ALPHA.length - 1 - step*count);
+  const idx = Array.from({length:count}, (_,i) => start + i*step);
+  const ai = start + count*step;
+  const pool = [ai-1, ai+1, ai+2, ai-step, ai+step, ai-2, ai-3, ai-4].filter(i => i>=0 && i<ALPHA.length && i!==ai).map(i => ALPHA[i]);
+  return seqQ(idx.map(i => ALPHA[i]), ALPHA[ai], pool,
+    step === 1 ? 'إنها حروف الأبجدية بالترتيب.' : `في كل مرة نتخطى ${step === 2 ? 'حرفاً واحداً' : 'حرفين'} من الأبجدية.`,
+    `ترتيب الأبجدية: ${ALPHA.slice(start, ai+1).join(' ')}`);
+}
+
+const PAT_GEN = {
+  easy:[
+    () => { const s=pick([2,3,5,10]), a=rnd(1,20); const t=[0,1,2,3,4].map(i => a+i*s); return numSeqQ(t, 'كم يزيد كل عدد عن الذي قبله؟', `نضيف ${s} في كل مرة: ${t[3]} + ${s} = ${t[4]}`); },
+    () => emojiQ(pick(['AB','ABC','AAB'])),
+    () => emojiQ(pick(['AB','ABB'])),
+    () => letterQ(1, 4)
+  ],
+  medium:[
+    () => { const s=pick([4,6,7,8,9,11,-2,-3,-5,-4]); const a = s<0 ? Math.abs(s)*5 + rnd(1,20) : rnd(1,25); const t=[0,1,2,3,4].map(i => a+i*s);
+            return numSeqQ(t, 'انظر إلى الفرق بين كل عددين متتاليين.', `${s>0?'نضيف':'نطرح'} ${Math.abs(s)} في كل مرة: ${t[3]} ${s>0?'+':'−'} ${Math.abs(s)} = ${t[4]}`); },
+    () => { const r=pick([2,2,3]); const a = r===2 ? rnd(1,6) : rnd(1,3); const t=[0,1,2,3,4].map(i => a*Math.pow(r,i));
+            return numSeqQ(t, 'هل هو جمع… أم شيء ينمو أسرع؟', `نضرب في ${r} في كل مرة: ${t[3]} × ${r} = ${t[4]}`); },
+    () => { const st=rnd(0,3), dir=pick([1,3]); const items=Array.from({length:6},(_,i) => ARROWS[(st+dir*i)%4]); const ans=ARROWS[(st+dir*6)%4];
+            return seqQ(items, ans, ARROWS, 'السهم يدور… لكن في أي اتجاه؟', `السهم يدور ربع دورة ${dir===1?'مع':'عكس'} عقارب الساعة في كل مرة.`); },
+    () => emojiQ(pick(['ABBC','AABB','ABCB'])),
+    () => letterQ(2, 4)
+  ],
+  hard:[
+    () => { const a=rnd(1,10), d=rnd(1,4); const t=[a]; for(let i=0;i<5;i++) t.push(t[i]+d+i);
+            return numSeqQ(t, 'الفرق نفسه يتغيّر بانتظام!', `الفروق تزيد واحداً كل مرة: +${d}، +${d+1}، +${d+2}… والأخير +${d+4}`); },
+    () => { const a=rnd(1,5), b=rnd(a,8); const t=[a,b]; for(let i=2;i<7;i++) t.push(t[i-1]+t[i-2]);
+            return numSeqQ(t, 'كل عدد له علاقة بالعددين اللذين قبله.', `كل عدد = مجموع العددين قبله: ${t[4]} + ${t[5]} = ${t[6]}`); },
+    () => { const a=rnd(1,4), plus=pick([1,-1]); const t=[a+ (plus<0?1:0)]; for(let i=0;i<4;i++) t.push(t[i]*2+plus);
+            return numSeqQ(t, 'جرّب الضرب في 2 ثم انظر ماذا يبقى.', `نضرب في 2 ثم ${plus>0?'نضيف':'نطرح'} 1: ${t[3]} × 2 ${plus>0?'+':'−'} 1 = ${t[4]}`); },
+    () => { const u=rnd(1,5), us=rnd(2,3), d=rnd(30,50), ds=rnd(2,5); const items=[]; for(let i=0;i<3;i++){ items.push(u+i*us, d-i*ds); } const ans=u+3*us;
+            const pool=[ans+1, ans-1, d-3*ds, ans+us, ans+2].filter(v => v>=0);
+            return seqQ(items, ans, pool, 'هناك نمطان متداخلان! انظر إلى الأعداد بالتناوب.', `الأعداد في المواقع الفردية تزيد ${us}: ${u}، ${u+us}، ${u+2*us}، ${ans}`); },
+    () => letterQ(3, 4)
+  ]
+};
+
+function scrambleQ(level){
+  const pool = SCRAMBLE[level].filter(([w]) => !G.used.has('scr|'+w));
+  const [word, clue] = pick(pool.length ? pool : SCRAMBLE[level]);
+  const letters = Array.from(word);
+  let mixed = shuffle(letters), guard = 0;
+  while(mixed.join('') === word && guard++ < 20) mixed = shuffle(letters);
+  return { cat:'word', type:'scramble', q:'رتّب الحروف لتكوين كلمة صحيحة', clue, answer:word, letters:mixed,
+           hint:`أول حرف هو «${letters[0]}»`, ex:`الكلمة هي «${word}»`, key:'scr|'+word };
+}
+
+/* ---- Bank picking */
+function bankQ(cat, level){
+  const near = level==='easy' ? ['easy','medium','hard'] : level==='hard' ? ['hard','medium','easy'] : ['medium','easy','hard'];
+  for(const lv of near){
+    const fresh = BANK.filter(b => b.cat===cat && b.level===lv && !G.used.has(b.id));
+    if(fresh.length){
+      const unseen = fresh.filter(b => !S.seen.includes(b.id));
+      const b = pick(unseen.length ? unseen : fresh);
+      S.seen = S.seen.filter(id => id !== b.id).concat(b.id).slice(-160);
+      const q = mc(cat, b.q, b.answer, shuffle([b.answer, ...b.wrongs]), b.hint, b.ex, b.seq ? [...b.seq, '؟'] : null);
+      q.bankId = b.id;
+      return q;
+    }
+  }
+  return null;
+}
+function genQ(cat, level, pid){
+  if(cat==='number') return pick(NUM_GEN[level])(pid);
+  if(cat==='pattern') return pick(PAT_GEN[level])();
+  if(cat==='word') return scrambleQ(level);
+  return null;
+}
+function makeQuestion(cat, level, pid){
+  const bankChance = {riddle:1, knowledge:1, word:.55, number:.35, pattern:.3}[cat];
+  const bankOnly = cat === 'riddle' || cat === 'knowledge';
+  for(let tries=0; tries<30; tries++){
+    if(Math.random() < bankChance){
+      const q = bankQ(cat, level);
+      if(q){ G.used.add(q.bankId); return q; }
+      // Whole category used up this game: allow repeats rather than stopping.
+      if(bankOnly){ BANK.forEach(b => { if(b.cat === cat) G.used.delete(b.id); }); continue; }
+    }
+    const q = genQ(cat, level, pid);
+    if(q && !G.used.has(q.key)){ G.used.add(q.key); return q; }
+  }
+  return bankOnly ? bankQ(cat, level) : genQ(cat, level, pid);
+}
+
+/* =========================================================
+   State + storage
+   ========================================================= */
+const STORE_KEY = 'family-treasure-hunt-v1';
+const S = { players:[], selected:new Set(), settings:{mode:'team', diff:'player', length:3, timer:0, sound:true}, seen:[] };
+let G = null;
+let lastRemoved = null;
+
+function defaultPlayers(){ return DEFAULT_NAMES.map((name,i) => ({ id:'d'+i, name, level:'medium', avatar:AVATARS[i%AVATARS.length], color:COLORS[i%COLORS.length] })); }
+function loadStore(){
+  let data = {};
+  try{ data = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ data = {}; }
+  S.players = Array.isArray(data.players) && data.players.length ? data.players.filter(p => p && p.id && p.name) : defaultPlayers();
+  S.players.forEach(p => { if(!LEVELS[p.level]) p.level='medium'; });
+  S.selected = new Set(Array.isArray(data.selected) ? data.selected.filter(id => S.players.some(p => p.id===id)) : S.players.map(p => p.id));
+  if(data.settings) Object.assign(S.settings, data.settings);
+  S.seen = Array.isArray(data.seen) ? data.seen : [];
+}
+function saveStore(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ players:S.players, selected:[...S.selected], settings:S.settings, seen:S.seen })); }catch(e){}
+}
+const getPlayer = id => S.players.find(p => p.id === id);
+
+/* =========================================================
+   Sound (Web Audio, no files)
+   ========================================================= */
+let AC = null;
+function audio(){
+  if(!S.settings.sound) return null;
+  try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === 'suspended') AC.resume(); }catch(e){ return null; }
+  return AC;
+}
+function tone(freq, start, dur, type, vol){
+  const ac = audio(); if(!ac) return;
+  const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + start;
+  o.type = type || 'sine'; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || .12, t + .02); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + .05);
+}
+const SFX = {
+  click(){ tone(620,0,.07,'triangle',.06); },
+  correct(){ [523,659,784,1047].forEach((f,i) => tone(f, i*.08, .25, 'triangle', .12)); },
+  wrong(){ tone(330,0,.18,'sawtooth',.05); tone(247,.16,.3,'sawtooth',.05); },
+  hint(){ tone(880,0,.1,'sine',.08); tone(1175,.09,.16,'sine',.08); },
+  tick(){ tone(1000,0,.03,'square',.03); },
+  stage(){ [392,523,659,784,1047].forEach((f,i) => tone(f, i*.1, .3, 'triangle', .11)); },
+  fanfare(){ [523,523,523,659,784,659,784,1047].forEach((f,i) => tone(f, i*.13, .28, 'square', .06)); [262,330,392].forEach(f => tone(f, 1.0, .9, 'triangle', .06)); }
+};
+
+/* =========================================================
+   Confetti
+   ========================================================= */
+const cvs = $('#confetti'), ctx = cvs.getContext('2d');
+let parts = [], confettiOn = false;
+function resizeCanvas(){ cvs.width = innerWidth * devicePixelRatio; cvs.height = innerHeight * devicePixelRatio; }
+addEventListener('resize', resizeCanvas); resizeCanvas();
+function confetti(n, opts){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const o = opts || {}; const W = cvs.width, H = cvs.height;
+  const cols = ['#f7c948','#ff6b6b','#2ee59d','#4cc9f0','#a78bfa','#ff7eb3','#ffffff'];
+  for(let i=0;i<n;i++){
+    parts.push({ x: o.x!=null ? o.x*W : Math.random()*W, y: o.y!=null ? o.y*H : -20*devicePixelRatio,
+      vx:(Math.random()-.5)*(o.spread||14)*devicePixelRatio, vy:(o.y!=null ? -(Math.random()*14+6) : Math.random()*3+2)*devicePixelRatio,
+      s:(Math.random()*7+5)*devicePixelRatio, r:Math.random()*6, vr:(Math.random()-.5)*.3, c:pick(cols), life:0, shape:Math.random()<.3?1:0 });
+  }
+  if(!confettiOn){ confettiOn = true; requestAnimationFrame(stepConfetti); }
+}
+function stepConfetti(){
+  ctx.clearRect(0,0,cvs.width,cvs.height);
+  parts.forEach(p => { p.life++; p.vy += .25*devicePixelRatio; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+    if(p.shape){ ctx.beginPath(); ctx.arc(0,0,p.s/2,0,Math.PI*2); ctx.fill(); } else ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);
+    ctx.restore(); });
+  parts = parts.filter(p => p.y < cvs.height + 40 && p.life < 400);
+  if(parts.length) requestAnimationFrame(stepConfetti); else { confettiOn = false; ctx.clearRect(0,0,cvs.width,cvs.height); }
+}
+
+/* =========================================================
+   UI utilities
+   ========================================================= */
+function showScreen(name){
+  $$('.screen').forEach(s => s.classList.remove('active'));
+  $('#screen-'+name).classList.add('active');
+  scrollTo({top:0, behavior:'smooth'});
+}
+let toastTimer = null;
+function toast(msg, actionLabel, action){
+  const old = $('.toast'); if(old) old.remove();
+  const t = el('div','toast'); t.setAttribute('role','status');
+  t.appendChild(el('span',null,msg));
+  if(actionLabel){ const b = el('button','btn btn-gold btn-sm',actionLabel); b.onclick = () => { action(); t.remove(); }; t.appendChild(b); }
+  document.body.appendChild(t);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.remove(), actionLabel ? 6000 : 2600);
+}
+function modal(title, text, buttons){
+  const bg = el('div','modal-bg'); const m = el('div','modal'); m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
+  m.appendChild(el('h3',null,title)); if(text) m.appendChild(el('p','muted',text));
+  const acts = el('div','acts');
+  const close = () => { bg.remove(); document.removeEventListener('keydown', onKey); };
+  buttons.forEach(([label, cls, fn]) => { const b = el('button','btn '+cls,label); b.onclick = () => { close(); if(fn) fn(); }; acts.appendChild(b); });
+  const onKey = e => { if(e.key === 'Escape'){ const last = buttons[buttons.length-1]; close(); if(last[2]) last[2](); } };
+  document.addEventListener('keydown', onKey);
+  m.appendChild(acts); bg.appendChild(m); document.body.appendChild(bg);
+  bg.addEventListener('click', e => { if(e.target === bg){ const last = buttons[buttons.length-1]; close(); if(last[2]) last[2](); } });
+  acts.firstChild.focus();
+}
+function avatarEl(p, cls){ const a = el('div', cls||'av', p.avatar); a.style.background = p.color; return a; }
+
+/* =========================================================
+   SETUP SCREEN
+   ========================================================= */
+function renderPlayers(){
+  const box = $('#players'); box.innerHTML = '';
+  const perPlayer = S.settings.diff === 'player';
+  S.players.forEach(p => {
+    const on = S.selected.has(p.id);
+    const card = el('div','player'+(on?' on':'')); card.tabIndex = 0; card.setAttribute('role','checkbox'); card.setAttribute('aria-checked', on);
+    card.setAttribute('aria-label', p.name);
+    card.appendChild(el('span','check', on ? '✓' : ''));
+    const rm = el('button','rm','✕'); rm.title = 'حذف'; rm.setAttribute('aria-label','حذف '+p.name);
+    rm.onclick = e => { e.stopPropagation(); removePlayer(p.id); };
+    card.appendChild(rm);
+    card.appendChild(avatarEl(p));
+    card.appendChild(el('div','nm',p.name));
+    const lv = el('button','lvl '+p.level+(perPlayer?'':' dim'), LEVELS[p.level].icon+' '+LEVELS[p.level].label);
+    lv.title = perPlayer ? 'اضغط لتغيير مستوى هذا اللاعب' : 'يُستخدم عند اختيار «حسب كل لاعب»';
+    lv.setAttribute('aria-label','مستوى '+p.name+': '+LEVELS[p.level].label);
+    lv.onclick = e => { e.stopPropagation(); p.level = LEVEL_ORDER[(LEVEL_ORDER.indexOf(p.level)+1)%3]; SFX.click(); saveStore(); renderPlayers(); };
+    card.appendChild(lv);
+    const toggle = () => { if(S.selected.has(p.id)) S.selected.delete(p.id); else S.selected.add(p.id); SFX.click(); saveStore(); renderPlayers(); };
+    card.onclick = toggle;
+    card.onkeydown = e => { if(e.target === card && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); toggle(); const again = $$('.player').find(c => c.getAttribute('aria-label') === p.name); if(again) again.focus(); } };
+    box.appendChild(card);
+  });
+  updateSummary();
+}
+function addPlayer(){
+  const inp = $('#newName');
+  const name = inp.value.replace(/\s+/g,' ').trim().slice(0,20);
+  if(!name){ toast('اكتب اسم اللاعب أولاً ✍️'); inp.focus(); return; }
+  if(S.players.some(p => p.name === name)){ toast('هذا الاسم موجود بالفعل 🙂'); inp.select(); return; }
+  const i = S.players.length;
+  const used = new Set(S.players.map(p => p.avatar));
+  const avatar = AVATARS.find(a => !used.has(a)) || AVATARS[i % AVATARS.length];
+  const p = { id:'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), name, level:'medium', avatar, color:COLORS[i % COLORS.length] };
+  S.players.push(p); S.selected.add(p.id); saveStore(); renderPlayers();
+  inp.value = ''; inp.focus(); SFX.correct(); toast(`مرحباً ${name}! 🎉`);
+}
+function removePlayer(id){
+  const idx = S.players.findIndex(p => p.id === id); if(idx < 0) return;
+  const p = S.players[idx];
+  lastRemoved = { p, idx, wasSel:S.selected.has(id) };
+  S.players.splice(idx,1); S.selected.delete(id); saveStore(); renderPlayers(); SFX.click();
+  toast(`تم حذف «${p.name}»`, 'تراجع ↩', () => {
+    if(!lastRemoved || S.players.some(x => x.id === lastRemoved.p.id)) return;
+    S.players.splice(Math.min(lastRemoved.idx, S.players.length), 0, lastRemoved.p);
+    if(lastRemoved.wasSel) S.selected.add(lastRemoved.p.id);
+    lastRemoved = null; saveStore(); renderPlayers();
+  });
+}
+function restoreDefaults(){
+  let added = 0;
+  defaultPlayers().forEach((d,i) => {
+    if(!S.players.some(p => p.name === d.name)){
+      if(S.players.some(p => p.id === d.id)) d.id = d.id + '_' + Date.now().toString(36);
+      S.players.splice(Math.min(i, S.players.length), 0, d); S.selected.add(d.id); added++;
+    }
+  });
+  saveStore(); renderPlayers();
+  toast(added ? `تمت استعادة ${added} من الأسماء ✨` : 'كل الأسماء الأصلية موجودة بالفعل 👍');
+}
+function renderSettings(){
+  $$('.mode').forEach(m => { const on = m.dataset.mode === S.settings.mode; m.classList.toggle('on', on); m.setAttribute('aria-pressed', on); });
+  $$('.seg').forEach(seg => { const k = seg.dataset.setting;
+    seg.querySelectorAll('button').forEach(b => { const on = String(S.settings[k]) === b.dataset.v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); });
+  const notes = {
+    player:'كل لاعب يحصل على أسئلة بمستواه (اضغط على شارة المستوى في بطاقته). مناسب جداً عندما تلعب أعمار مختلفة معاً!',
+    easy:'أسئلة سهلة للجميع — بداية ممتعة.', medium:'أسئلة متوسطة للجميع — تحدٍّ متوازن.', hard:'أسئلة صعبة للجميع — للعقول الجبّارة فقط! 🔥',
+    progressive:'تبدأ المحطات سهلة، ثم تزداد صعوبةً حتى جبل المعرفة.'
+  };
+  $('#diffNote').textContent = notes[S.settings.diff];
+  renderPlayers();
+}
+function qCount(n){ return n===1 ? 'سؤال واحد' : n===2 ? 'سؤالان' : n<=10 ? `${n} أسئلة` : `${n} سؤالاً`; }
+function planCounts(n){
+  const base = S.settings.length * STAGES.length;
+  const total = S.settings.mode === 'solo' ? Math.ceil(base / n) * n : base;
+  const counts = STAGES.map((_,i) => Math.floor(total/STAGES.length) + (i < total % STAGES.length ? 1 : 0));
+  return { total, counts };
+}
+function updateSummary(){
+  const n = [...S.selected].filter(id => getPlayer(id)).length;
+  $('#selCount').textContent = `${n} من ${S.players.length}`;
+  const btn = $('#startBtn');
+  if(!n){ $('#summary').textContent = 'اختر لاعباً واحداً على الأقل لتبدأ المغامرة 👆'; btn.disabled = true; return; }
+  btn.disabled = false;
+  const { total } = planCounts(n);
+  $('#summary').textContent = S.settings.mode === 'solo'
+    ? `🏆 لعب فردي • ${n} ${n===1?'لاعب':'من اللاعبين'} • ${qCount(total)} في 5 محطات • لكل لاعب ${total/n===1 ? 'دور واحد' : (total/n)+' أدوار'}`
+    : `🤝 فريق واحد • ${n} ${n===1?'لاعب':'من اللاعبين'} • ${qCount(total)} في 5 محطات بالتناوب`;
+}
+
+/* =========================================================
+   GAME FLOW
+   ========================================================= */
+function startGame(){
+  const ids = shuffle([...S.selected].filter(id => getPlayer(id)));
+  if(!ids.length){ toast('اختر لاعباً واحداً على الأقل'); return; }
+  const { total, counts } = planCounts(ids.length);
+  G = { mode:S.settings.mode, ids, counts, total, stage:0, q:0, turn:0, done:0, used:new Set(), stats:{},
+        team:{pts:0, correct:0, answered:0, streak:0, gems:0}, stageCorrect:0, cur:null, answered:false, hintUsed:false,
+        timerId:null, timeLeft:0, paused:false, scr:null };
+  ids.forEach(id => G.stats[id] = { pts:0, correct:0, answered:0, hints:0, streak:0, best:0, cats:{} });
+  saveStore(); SFX.stage();
+  showMap();
+}
+function levelFor(pid){
+  const d = S.settings.diff;
+  if(d === 'player') return (getPlayer(pid) || {}).level || 'medium';
+  if(d === 'progressive') return PROGRESSIVE[G.stage];
+  return d;
+}
+
+/* ---------- Map ---------- */
+const MAP_PTS = [[555,330],[470,282],[340,318],[232,240],[352,150],[214,86],[78,70]];
+function segments(pts){
+  const segs = [];
+  for(let i=0;i<pts.length-1;i++){
+    const p0 = pts[i-1] || pts[i], p1 = pts[i], p2 = pts[i+1], p3 = pts[i+2] || p2;
+    const c1 = [p1[0] + (p2[0]-p0[0])/6, p1[1] + (p2[1]-p0[1])/6], c2 = [p2[0] - (p3[0]-p1[0])/6, p2[1] - (p3[1]-p1[1])/6];
+    segs.push(` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0]},${p2[1]}`);
+  }
+  return segs;
+}
+function mapSVG(doneStages, atTreasure){
+  const segs = segments(MAP_PTS), M = `M${MAP_PTS[0][0]},${MAP_PTS[0][1]}`;
+  const donePath = M + segs.slice(0, atTreasure ? segs.length : doneStages).join('');
+  const shipAt = atTreasure ? MAP_PTS[6] : MAP_PTS[doneStages];
+  let nodes = '';
+  STAGES.forEach((s,i) => {
+    const [x,y] = MAP_PTS[i+1];
+    const state = i < doneStages || atTreasure ? 'done' : i === doneStages ? 'cur' : 'todo';
+    const fill = state==='done' ? '#f7c948' : state==='cur' ? '#fffaf0' : '#d8bf8a';
+    nodes += `<g class="${state==='cur'?'node-pulse':''}">
+      <circle cx="${x}" cy="${y}" r="27" fill="${fill}" stroke="#5a3712" stroke-width="3" ${state==='todo'?'opacity=".75"':''}/>
+      <text x="${x}" y="${y+2}" font-size="27" text-anchor="middle" dominant-baseline="middle">${s.icon}</text></g>`;
+    if(state==='done') nodes += `<circle cx="${x+20}" cy="${y-20}" r="10" fill="#2ee59d" stroke="#0d5c3a" stroke-width="2"/><text x="${x+20}" y="${y-19}" font-size="12" font-weight="900" text-anchor="middle" dominant-baseline="middle" fill="#053">✓</text>`;
+    nodes += `<text x="${x}" y="${y+44}" font-size="14" font-weight="900" text-anchor="middle" fill="#4a2c0a" style="paint-order:stroke" stroke="#f3e2b8" stroke-width="4">${s.name}</text>`;
+  });
+  const [tx,ty] = MAP_PTS[6];
+  return `<svg viewBox="0 0 620 390" role="img" aria-label="خريطة الكنز: ${doneStages} من 5 محطات مكتملة">
+    <defs>
+      <radialGradient id="parch" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#f8ebc8"/><stop offset=".7" stop-color="#ead09a"/><stop offset="1" stop-color="#c99c5a"/></radialGradient>
+      <pattern id="waves" width="40" height="16" patternUnits="userSpaceOnUse"><path d="M0 8 Q10 2 20 8 T40 8" fill="none" stroke="#7aa6b8" stroke-width="1.5" opacity=".55"/></pattern>
+    </defs>
+    <rect width="620" height="390" fill="url(#parch)"/>
+    <rect width="620" height="390" fill="url(#waves)" opacity=".35"/>
+    <path d="M300,360 C380,300 520,380 600,250 C640,170 560,90 470,110 C400,125 420,40 300,40 C170,40 90,20 40,90 C0,160 60,220 120,230 C200,245 150,330 300,360 Z" fill="#e9d29f" stroke="#a77b3f" stroke-width="3" stroke-dasharray="2 5" opacity=".9"/>
+    <text x="300" y="300" font-size="26">🌴</text><text x="560" y="210" font-size="24">🌴</text><text x="120" y="190" font-size="24">⛰️</text>
+    <text x="440" y="70" font-size="22">🌲</text><text x="32" y="360" font-size="30">🐙</text><text x="575" y="60" font-size="24">🦅</text>
+    <g transform="translate(70,300)" opacity=".85"><circle r="34" fill="none" stroke="#6b4a1f" stroke-width="2"/>
+      <path d="M0,-30 L6,0 L0,30 L-6,0 Z" fill="#8b1e1e"/><path d="M-30,0 L0,-6 L30,0 L0,6 Z" fill="#6b4a1f"/>
+      <text y="-38" font-size="12" font-weight="900" text-anchor="middle" fill="#4a2c0a">ش</text></g>
+    <path d="${M + segs.join('')}" fill="none" stroke="#7a4e21" stroke-width="4" stroke-dasharray="3 10" stroke-linecap="round" opacity=".7"/>
+    <path d="${donePath}" fill="none" stroke="#c0392b" stroke-width="5" stroke-dasharray="12 9" stroke-linecap="round"/>
+    <g><line x1="${tx-16}" y1="${ty-16}" x2="${tx+16}" y2="${ty+16}" stroke="#b3001b" stroke-width="7" stroke-linecap="round"/>
+       <line x1="${tx+16}" y1="${ty-16}" x2="${tx-16}" y2="${ty+16}" stroke="#b3001b" stroke-width="7" stroke-linecap="round"/>
+       <text x="${tx}" y="${ty+40}" font-size="14" font-weight="900" text-anchor="middle" fill="#7a0010">الكنز!</text></g>
+    ${nodes}
+    <text x="${shipAt[0]}" y="${shipAt[1]-30}" font-size="34" text-anchor="middle" dominant-baseline="middle">${atTreasure ? '💎' : '⛵'}</text>
+  </svg>`;
+}
+function showMap(){
+  const s = STAGES[G.stage];
+  $('#mapBox').innerHTML = mapSVG(G.stage, false);
+  $('#storyText').textContent = (G.stage === 0 ? 'يا أبطال العائلة! ' : '') + s.story;
+  $('#stIcon').textContent = s.icon;
+  $('#stNum').textContent = `المحطة ${G.stage+1} من ${STAGES.length} • ${CATS[s.cat].icon} ${CATS[s.cat].label} • ${qCount(G.counts[G.stage])}`;
+  $('#stName').textContent = s.name;
+  $('#stDesc').textContent = s.desc;
+  const ob = $('#orderBox'); ob.innerHTML = '';
+  if(G.stage === 0){
+    ob.appendChild(el('div','muted', G.mode === 'team' ? '🤝 ترتيب الأدوار (الفريق كله يساعد):' : '🎲 ترتيب الأدوار:'));
+    const row = el('div','board'); row.style.marginTop = '8px';
+    G.ids.forEach((id,i) => { const p = getPlayer(id); const c = el('div','sb'); c.appendChild(el('span','a',p.avatar)); c.appendChild(el('span',null,`${i+1}. ${p.name}`)); row.appendChild(c); });
+    ob.appendChild(row);
+  }
+  renderBoard($('#mapBoard'));
+  showScreen('map');
+  setTimeout(() => $('#goStage').focus({preventScroll:true}), 300);
+}
+
+/* ---------- Questions ---------- */
+function nextTurn(){
+  const pid = G.ids[G.turn % G.ids.length];
+  const level = levelFor(pid);
+  const q = makeQuestion(STAGES[G.stage].cat, level, pid);
+  G.cur = { pid, level, q }; G.answered = false; G.hintUsed = false;
+  if(q.type === 'scramble') G.scr = { tiles:q.letters.map(ch => ({ch, used:false})), slots:Array(q.letters.length).fill(null), locked:new Set() };
+  renderQuestion();
+  showScreen('play');
+}
+function renderQuestion(){
+  const s = STAGES[G.stage], { pid, level, q } = G.cur, p = getPlayer(pid);
+  $('#playTitle').textContent = `${s.icon} ${s.name}`;
+  $('#playCount').textContent = `${G.q+1} / ${G.counts[G.stage]}`;
+  $('#playProg').style.width = (G.done / G.total * 100) + '%';
+
+  const turn = $('#turn'); turn.innerHTML = ''; turn.style.animation = 'none'; void turn.offsetWidth; turn.style.animation = '';
+  turn.appendChild(avatarEl(p));
+  const t = el('div'); t.style.flex = '1';
+  t.appendChild(el('div','who', `دور: ${p.name}`));
+  t.appendChild(el('div','sub', G.mode === 'team' ? 'الإجابة باسم الفريق — يمكن للجميع المساعدة 🤝' : 'أجب بنفسك هذه المرة! 🎯'));
+  turn.appendChild(t);
+  turn.appendChild(el('span','lvl '+level, LEVELS[level].icon+' '+LEVELS[level].label));
+
+  const card = $('#qcard'); card.innerHTML = '';
+  const meta = el('div','qmeta');
+  meta.appendChild(el('span','badge', CATS[q.cat].icon+' '+(q.type==='scramble' ? 'كلمة مبعثرة' : CATS[q.cat].label)));
+  const st = G.mode === 'team' ? G.team : G.stats[pid];
+  if(st.streak >= 2) meta.appendChild(el('span','badge', `🔥 سلسلة ${st.streak}`));
+  card.appendChild(meta);
+  card.appendChild(el('div','qtext', q.q));
+  if(q.clue) card.appendChild(el('div','clue', '🔎 الدليل: ' + q.clue));
+  if(q.seq){ const sq = el('div','seq'); q.seq.forEach(v => sq.appendChild(el('span', v==='؟' ? 'q' : '', v))); card.appendChild(sq); }
+
+  if(q.type === 'mc'){
+    const opts = el('div','opts'); const keys = ['أ','ب','ج','د'];
+    const isEmoji = q.options.every(o => /\p{Extended_Pictographic}/u.test(o) && o.length <= 4);
+    q.options.forEach((o,i) => {
+      const b = el('button','opt'+(isEmoji?' emoji':'')); b.dataset.v = o;
+      b.appendChild(el('span','k',keys[i])); b.appendChild(el('span','v',o));
+      b.setAttribute('aria-label', `الخيار ${keys[i]}: ${o}`);
+      b.onclick = () => handleAnswer(o);
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+  } else {
+    card.appendChild(el('div','preview')).id = 'scrPreview';
+    const slots = el('div','slots'); slots.id = 'scrSlots'; card.appendChild(slots);
+    const tiles = el('div','tiles'); tiles.id = 'scrTiles'; card.appendChild(tiles);
+    renderScramble();
+  }
+
+  if(S.settings.timer > 0){
+    const tm = el('div','timer'); tm.id = 'timer';
+    tm.innerHTML = '<span>⏱️</span><div class="progress"><i></i></div><b></b>';
+    card.appendChild(tm);
+  }
+  const hb = el('div','hint-box hidden'); hb.id = 'hintBox'; card.appendChild(hb);
+
+  const acts = el('div','q-actions');
+  const hintBtn = el('button','btn btn-ghost','💡 تلميح (نصف النقاط)'); hintBtn.id = 'hintBtn'; hintBtn.onclick = useHint;
+  acts.appendChild(hintBtn);
+  if(q.type === 'scramble'){
+    const right = el('div','toolbar');
+    const clr = el('button','btn btn-ghost','🧹 مسح'); clr.id = 'scrClear'; clr.onclick = clearScramble;
+    const chk = el('button','btn btn-mint','✔ تحقّق'); chk.id = 'scrCheck'; chk.onclick = () => handleAnswer(scrWord());
+    right.appendChild(clr); right.appendChild(chk); acts.appendChild(right);
+  }
+  card.appendChild(acts);
+  const fb = el('div','feedback hidden'); fb.id = 'feedback'; card.appendChild(fb);
+
+  renderBoard($('#playBoard'));
+  startTimer();
+}
+
+/* scramble */
+function scrWord(){ return G.scr.slots.map(i => i==null ? '' : G.scr.tiles[i].ch).join(''); }
+function renderScramble(){
+  const sc = G.scr, q = G.cur.q;
+  const slots = $('#scrSlots'), tiles = $('#scrTiles'); if(!slots) return;
+  slots.innerHTML = ''; tiles.innerHTML = '';
+  sc.slots.forEach((ti, si) => {
+    const b = el('button','slot'+(ti!=null?' filled':'')+(sc.locked.has(si)?' locked':''), ti!=null ? sc.tiles[ti].ch : '');
+    b.setAttribute('aria-label', ti!=null ? `حرف ${sc.tiles[ti].ch} — اضغط لإرجاعه` : `خانة فارغة ${si+1}`);
+    b.onclick = () => { if(G.answered || ti==null || sc.locked.has(si)) return; sc.tiles[ti].used = false; sc.slots[si] = null; SFX.click(); renderScramble(); };
+    slots.appendChild(b);
+  });
+  sc.tiles.forEach((t, ti) => {
+    const b = el('button','tile'+(t.used?' used':''), t.ch); b.setAttribute('aria-label','حرف '+t.ch);
+    b.onclick = () => { if(G.answered || t.used) return; const si = sc.slots.indexOf(null); if(si < 0) return; sc.slots[si] = ti; t.used = true; SFX.click(); renderScramble(); };
+    tiles.appendChild(b);
+  });
+  $('#scrPreview').textContent = scrWord() || '…';
+  const chk = $('#scrCheck'); if(chk) chk.disabled = G.answered || sc.slots.includes(null);
+  if(q && !G.answered && !sc.slots.includes(null) && chk) chk.focus({preventScroll:true});
+}
+function clearScramble(){
+  if(G.answered) return;
+  G.scr.slots.forEach((ti, si) => { if(ti!=null && !G.scr.locked.has(si)){ G.scr.tiles[ti].used = false; G.scr.slots[si] = null; } });
+  SFX.click(); renderScramble();
+}
+
+/* hint */
+function useHint(){
+  if(G.answered || G.hintUsed) return;
+  G.hintUsed = true; SFX.hint();
+  const q = G.cur.q, box = $('#hintBox');
+  box.textContent = '💡 ' + (q.hint || 'فكّر جيداً… أحد الخيارات اختفى!');
+  box.classList.remove('hidden');
+  if(q.type === 'mc'){
+    const wrong = $$('#qcard .opt').filter(b => b.dataset.v !== q.answer && !b.disabled);
+    const w = pick(wrong); if(w){ w.disabled = true; w.classList.add('struck'); }
+    if(!q.hint) box.textContent = '💡 حذفنا خياراً خاطئاً من أجلك!';
+    else box.textContent += ' (وحذفنا خياراً خاطئاً)';
+  } else {
+    const sc = G.scr, ch = Array.from(q.answer)[0];
+    if(sc.slots[0] != null){ sc.tiles[sc.slots[0]].used = false; sc.slots[0] = null; }
+    const ti = sc.tiles.findIndex(t => !t.used && t.ch === ch);
+    if(ti >= 0){ sc.slots[0] = ti; sc.tiles[ti].used = true; sc.locked.add(0); }
+    renderScramble();
+  }
+  const hb = $('#hintBtn'); hb.disabled = true; hb.textContent = '💡 تم استخدام التلميح';
+}
+
+/* timer */
+function startTimer(){
+  stopTimer();
+  if(!(S.settings.timer > 0)) return;
+  G.timeLeft = S.settings.timer; drawTimer();
+  G.timerId = setInterval(() => {
+    if(G.paused || G.answered) return;
+    G.timeLeft--; drawTimer();
+    if(G.timeLeft <= 5 && G.timeLeft > 0) SFX.tick();
+    if(G.timeLeft <= 0){ stopTimer(); handleAnswer(null, true); }
+  }, 1000);
+}
+function stopTimer(){ if(G && G.timerId){ clearInterval(G.timerId); G.timerId = null; } }
+function drawTimer(){
+  const tm = $('#timer'); if(!tm) return;
+  tm.querySelector('i').style.width = (G.timeLeft / S.settings.timer * 100) + '%';
+  tm.querySelector('b').textContent = G.timeLeft;
+  tm.classList.toggle('low', G.timeLeft <= 10);
+}
+
+/* answer */
+function handleAnswer(given, timedOut){
+  if(G.answered) return;
+  G.answered = true; stopTimer();
+  const { pid, q } = G.cur, st = G.stats[pid];
+  const holder = G.mode === 'team' ? G.team : st;
+  const ok = given === q.answer;
+  st.answered++; if(G.mode === 'team') G.team.answered++;
+  if(G.hintUsed) st.hints++;
+  let gained = 0, bonus = 0;
+  if(ok){
+    gained = G.hintUsed ? HINT_PTS : PTS;
+    holder.streak++; if(holder.streak % 3 === 0) bonus = STREAK_BONUS;
+    st.correct++; st.cats[q.cat] = (st.cats[q.cat]||0) + 1; G.stageCorrect++;
+    st.pts += gained + bonus;
+    if(G.mode === 'team'){ G.team.pts += gained + bonus; G.team.correct++; G.team.gems++; }
+    if(G.mode === 'solo') st.best = Math.max(st.best, st.streak);
+  } else {
+    holder.streak = 0;
+  }
+  if(G.mode === 'team') G.team.best = Math.max(G.team.best||0, G.team.streak);
+
+  // mark UI
+  if(q.type === 'mc'){
+    $$('#qcard .opt').forEach(b => { b.disabled = true; if(b.dataset.v === q.answer) b.classList.add('right'); else if(b.dataset.v === given) b.classList.add('wrong'); });
+  } else {
+    renderScramble();
+    $$('#scrSlots .slot').forEach(s => s.classList.add(ok ? 'right' : 'wrong'));
+    $('#scrPreview').textContent = ok ? q.answer : `${scrWord() || '—'}  ←  ${q.answer}`;
+    ['#scrClear','#scrCheck'].forEach(s => { const b = $(s); if(b) b.disabled = true; });
+  }
+  const hb = $('#hintBtn'); if(hb) hb.disabled = true;
+
+  // feedback
+  const fb = $('#feedback'); fb.innerHTML = ''; fb.className = 'feedback ' + (ok ? 'good' : 'bad');
+  fb.appendChild(el('h3', null, ok ? pick(PRAISE) : (timedOut ? '⏰ انتهى الوقت!' : pick(COMFORT))));
+  if(!ok) fb.appendChild(el('div', null, `الإجابة الصحيحة: «${q.answer}»`));
+  if(q.ex) fb.appendChild(el('div','muted', '📜 ' + q.ex));
+  const row = el('div','row');
+  const pts = el('div','pts');
+  pts.textContent = ok ? `+${gained} ${G.mode==='team' ? 'للفريق 💎' : 'نقاط ⭐'}${bonus ? `  •  +${bonus} مكافأة السلسلة 🔥` : ''}` : 'لا خسارة للنقاط — الكنز ما زال بانتظاركم! 🧭';
+  if(!ok) pts.style.color = 'var(--muted)';
+  row.appendChild(pts);
+  const last = G.q + 1 >= G.counts[G.stage];
+  const nb = el('button','btn btn-gold', last ? 'إنهاء المحطة 🏁' : 'السؤال التالي ⬅');
+  nb.id = 'nextBtn'; nb.onclick = advance; row.appendChild(nb);
+  fb.appendChild(row);
+  fb.classList.remove('hidden');
+  setTimeout(() => { nb.focus({preventScroll:true}); fb.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 120);
+
+  if(ok){ SFX.correct(); confetti(bonus ? 90 : 45, {x:.5, y:.55, spread:18}); } else SFX.wrong();
+  G.done++;
+  $('#playProg').style.width = (G.done / G.total * 100) + '%';
+  renderBoard($('#playBoard'));
+}
+function advance(){
+  if(!G.answered) return;
+  SFX.click();
+  G.q++; G.turn++;
+  if(G.q >= G.counts[G.stage]) stageClear(); else nextTurn();
+}
+
+/* ---------- Stage clear ---------- */
+function stageClear(){
+  stopTimer();
+  const s = STAGES[G.stage], n = G.counts[G.stage], c = G.stageCorrect;
+  $('#clrIcon').textContent = s.icon;
+  $('#clrTitle').textContent = c === n ? `مثالي! اجتزتم ${s.name} 🌟` : `اجتزتم ${s.name}! 🎉`;
+  $('#clrText').textContent = `حصلتم على القطعة ${G.stage+1} من خريطة الكنز.` + (G.stage < STAGES.length-1 ? ` المحطة القادمة: ${STAGES[G.stage+1].icon} ${STAGES[G.stage+1].name}` : ' الخريطة اكتملت… الكنز قريب جداً!');
+  const pc = $('#clrPieces'); pc.innerHTML = '';
+  STAGES.forEach((st,i) => { const d = el('div','piece'+(i<=G.stage?' got':''), i<=G.stage ? st.icon : '❔'); d.style.animationDelay = (i*.08)+'s'; pc.appendChild(d); });
+  const stats = $('#clrStats'); stats.innerHTML = '';
+  stats.appendChild(el('span','badge', `✅ ${c} من ${n} إجابات صحيحة`));
+  if(G.mode === 'team') stats.appendChild(el('span','badge', `💎 جواهر الفريق: ${G.team.gems}`));
+  else { const lead = leaders(); stats.appendChild(el('span','badge', `👑 في الصدارة: ${lead.map(id => getPlayer(id).name).join('، ')}`)); }
+  $('#clrNext').textContent = G.stage < STAGES.length-1 ? 'إلى الخريطة 🗺️' : 'إلى بوابة الكنز 💎';
+  showScreen('clear'); SFX.stage(); confetti(140);
+  setTimeout(() => $('#clrNext').focus({preventScroll:true}), 300);
+}
+function afterClear(){
+  SFX.click();
+  G.stage++; G.q = 0; G.stageCorrect = 0;
+  if(G.stage >= STAGES.length) showFinal(); else showMap();
+}
+function leaders(){
+  const max = Math.max(...G.ids.map(id => G.stats[id].pts));
+  return G.ids.filter(id => G.stats[id].pts === max);
+}
+
+/* ---------- Scoreboard ---------- */
+function renderBoard(box){
+  box.innerHTML = '';
+  if(G.mode === 'team'){
+    const head = el('div','card-title','🤝 تقدّم الفريق'); head.style.marginBottom = '10px'; box.appendChild(head);
+    const m = el('div','team-meter');
+    m.appendChild(el('span','gems','💎'));
+    const pr = el('div','progress'); const bar = el('i'); bar.style.width = (G.team.gems / G.total * 100) + '%'; pr.appendChild(bar); m.appendChild(pr);
+    m.appendChild(el('b', null, `${G.team.gems} / ${G.total}`));
+    box.appendChild(m);
+    const pills = el('div','stat-pills'); pills.style.marginTop = '10px';
+    pills.appendChild(el('span','badge', `⭐ النقاط: ${G.team.pts}`));
+    pills.appendChild(el('span','badge', `🔥 السلسلة: ${G.team.streak}`));
+    pills.appendChild(el('span','badge', `🗺️ المحطة ${Math.min(G.stage+1, STAGES.length)} من ${STAGES.length}`));
+    box.appendChild(pills);
+  } else {
+    const head = el('div','card-title','🏆 لوحة النقاط'); head.style.marginBottom = '10px'; box.appendChild(head);
+    const row = el('div','board');
+    const curId = G.cur && document.getElementById('screen-play').classList.contains('active') ? G.cur.pid : null;
+    [...G.ids].sort((a,b) => G.stats[b].pts - G.stats[a].pts || G.stats[b].correct - G.stats[a].correct).forEach(id => {
+      const p = getPlayer(id), s = G.stats[id];
+      const c = el('div','sb'+(id===curId?' cur':''));
+      c.appendChild(el('span','a',p.avatar)); c.appendChild(el('span',null,p.name)); c.appendChild(el('span','p',`${s.pts}`));
+      if(s.streak >= 2) c.appendChild(el('span',null,'🔥'));
+      row.appendChild(c);
+    });
+    box.appendChild(row);
+  }
+}
+
+/* ---------- Final / treasure ---------- */
+function showFinal(){
+  stopTimer();
+  $('#chestStage').classList.remove('opened');
+  $('#lootBox').innerHTML = '';
+  $('#results').classList.add('hidden'); $('#results').innerHTML = '';
+  $('#openChest').classList.remove('hidden');
+  $('#finTitle').textContent = '💎 وصلتم إلى بوابة الكنز!';
+  if(G.mode === 'team') $('#finSub').textContent = `جمع الفريق ${G.team.gems} من الجواهر في رحلته. الصندوق يهتز… ماذا يوجد في داخله؟`;
+  else { const lead = leaders().map(id => getPlayer(id).name); $('#finSub').textContent = `المفتاح الذهبي ${lead.length>1 ? 'يتقاسمه' : 'من نصيب'}: ${lead.join(' و ')}! هيا افتحوا الصندوق…`; }
+  showScreen('final');
+  setTimeout(() => $('#openChest').focus({preventScroll:true}), 300);
+}
+function teamTier(){
+  const acc = G.team.answered ? G.team.correct / G.team.answered : 0;
+  if(acc >= .8) return { name:'👑 الكنز الأسطوري', loot:['👑','💎','🪙','💍','🏆','💎','🪙'], text:'أسطورة حقيقية! فريق لا يُقهر.' };
+  if(acc >= .5) return { name:'💎 كنز الجواهر', loot:['💎','🪙','💍','🪙','💎'], text:'فريق رائع! الجواهر تلمع لكم.' };
+  return { name:'🪙 صندوق الذهب القديم', loot:['🪙','🗝️','⭐','🪙'], text:'كل مغامرة تجعلكم أقوى — والذهب لكم!' };
+}
+function openChest(){
+  const stage = $('#chestStage'); if(stage.classList.contains('opened')) return;
+  $('#openChest').classList.add('hidden');
+  stage.classList.add('opened');
+  const loot = G.mode === 'team' ? teamTier().loot : ['👑','💎','🪙','🏆','💍','🪙'];
+  const box = $('#lootBox'); box.innerHTML = '';
+  loot.forEach((e,i) => {
+    const l = el('div','loot',e);
+    const dx = (i - (loot.length-1)/2) * 46; l.style.setProperty('--dx', dx+'px'); l.style.setProperty('--dy', (-110 - Math.abs(dx)*-.2 - rnd(0,40))+'px');
+    l.style.setProperty('--r', rnd(-25,25)+'deg'); l.style.animationDelay = (.35 + i*.08)+'s'; box.appendChild(l);
+  });
+  SFX.fanfare();
+  confetti(220); setTimeout(() => confetti(160, {x:.5, y:.5, spread:26}), 500);
+  setTimeout(renderResults, 900);
+}
+function renderResults(){
+  const r = $('#results'); r.innerHTML = ''; r.classList.remove('hidden');
+  if(G.mode === 'team'){
+    const tier = teamTier();
+    $('#finTitle').textContent = '🎉 الكنز لكم!';
+    r.appendChild(el('div','tier', tier.name));
+    r.appendChild(el('p','muted', tier.text));
+    const pills = el('div','stat-pills'); pills.style.justifyContent = 'center';
+    pills.appendChild(el('span','badge', `⭐ ${G.team.pts} نقطة`));
+    pills.appendChild(el('span','badge', `💎 ${G.team.gems} من ${G.total} جواهر`));
+    pills.appendChild(el('span','badge', `🎯 الدقة ${Math.round(G.team.correct / Math.max(1,G.team.answered) * 100)}%`));
+    if((G.team.best||0) >= 3) pills.appendChild(el('span','badge', `🔥 أطول سلسلة ${G.team.best}`));
+    r.appendChild(pills);
+    const h = el('h3',null,'🌟 أبطال الفريق'); h.style.margin = '18px 0 6px'; r.appendChild(h);
+    r.appendChild(rankList([...G.ids].sort((a,b) => G.stats[b].correct - G.stats[a].correct), false));
+  } else {
+    const order = [...G.ids].sort((a,b) => G.stats[b].pts - G.stats[a].pts || G.stats[b].correct - G.stats[a].correct);
+    const lead = leaders();
+    if(lead.length === 1) $('#finTitle').textContent = `👑 الكنز من نصيب ${getPlayer(lead[0]).name}!`;
+    else $('#finTitle').textContent = `🤝 الكنز يتقاسمه: ${lead.map(id => getPlayer(id).name).join(' و ')}`;
+    r.appendChild(el('p','muted','كل الأبطال يحصلون على أوسمة — المغامرة للجميع!'));
+    const pod = el('div','podium');
+    const top = order.slice(0,3); const vis = top.length === 3 ? [top[1], top[0], top[2]] : top.length === 2 ? [top[1], top[0]] : top;
+    vis.forEach(id => {
+      const rank = rankOf(id, order);
+      const d = el('div','pod p'+Math.min(rank,3)); const p = getPlayer(id);
+      d.appendChild(avatarEl(p)); d.appendChild(el('div','nm',p.name)); d.appendChild(el('div','muted',`${G.stats[id].pts} نقطة`));
+      d.appendChild(el('div','blk', rank===1?'🥇':rank===2?'🥈':'🥉'));
+      pod.appendChild(d);
+    });
+    r.appendChild(pod);
+    r.appendChild(rankList(order, true));
+  }
+  const acts = el('div','end-actions');
+  const again = el('button','btn btn-gold btn-lg','🔁 العب مرة أخرى'); again.onclick = () => { SFX.click(); startGame(); };
+  const change = el('button','btn btn-ghost btn-lg','👥 تغيير اللاعبين'); change.onclick = () => { SFX.click(); G = null; renderSettings(); showScreen('setup'); };
+  acts.appendChild(again); acts.appendChild(change); r.appendChild(acts);
+  setTimeout(() => r.scrollIntoView({behavior:'smooth', block:'start'}), 200);
+}
+function rankOf(id, order){
+  const pts = G.stats[id].pts; return order.findIndex(x => G.stats[x].pts === pts) + 1;
+}
+function medalsFor(id){
+  const s = G.stats[id], out = [];
+  const cats = Object.entries(s.cats).sort((a,b) => b[1]-a[1]);
+  if(cats.length) out.push(MEDAL_BY_CAT[cats[0][0]]);
+  if(s.best >= 3 && G.mode === 'solo') out.push('🔥 وسام السلسلة');
+  if(s.answered && s.correct === s.answered) out.push('🎯 وسام الإتقان');
+  if(s.answered && s.hints === 0 && s.correct > 0) out.push('🦅 بلا تلميحات');
+  if(!out.length) out.push('🧭 وسام الشجاعة');
+  return out;
+}
+function rankList(order, solo){
+  const list = el('div','rank-list');
+  order.forEach((id,i) => {
+    const p = getPlayer(id), s = G.stats[id];
+    const row = el('div','rank');
+    row.appendChild(el('span','n', solo ? String(rankOf(id, order)) : '★'));
+    row.appendChild(el('span','a', p.avatar));
+    const info = el('div','info'); info.appendChild(el('b',null,p.name));
+    info.appendChild(el('small',null,`✅ ${s.correct} من ${s.answered} صحيحة${s.hints ? ` • 💡 ${s.hints} تلميح` : ''}`));
+    const md = el('div','medals'); medalsFor(id).forEach(m => md.appendChild(el('span','medal',m))); info.appendChild(md);
+    row.appendChild(info);
+    row.appendChild(el('span','score', solo ? `${s.pts} ⭐` : `+${s.pts}`));
+    list.appendChild(row);
+  });
+  return list;
+}
+
+/* ---------- Quit menu ---------- */
+function openMenu(){
+  if(!G) return;
+  G.paused = true;
+  const resume = () => { if(G) G.paused = false; };
+  modal('⏸️ توقّف مؤقت', 'ماذا تريدون أن تفعلوا؟', [
+    ['▶️ متابعة اللعب','btn-gold', resume],
+    ['🏁 إنهاء الآن وعرض الكنز','btn-ghost', () => { stopTimer(); G.paused = false; showFinal(); }],
+    ['👥 العودة لاختيار اللاعبين','btn-danger', () => { stopTimer(); G = null; renderSettings(); showScreen('setup'); }],
+    ['إغلاق','btn-ghost', resume]
+  ]);
+}
+
+/* =========================================================
+   Wiring
+   ========================================================= */
+function updateSoundBtn(){ const b = $('#soundBtn'); b.textContent = S.settings.sound ? '🔊' : '🔇'; b.setAttribute('aria-pressed', S.settings.sound); }
+$('#soundBtn').onclick = () => { S.settings.sound = !S.settings.sound; saveStore(); updateSoundBtn(); SFX.click(); };
+$('#addBtn').onclick = addPlayer;
+$('#newName').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); addPlayer(); } });
+$('#selAll').onclick = () => { S.players.forEach(p => S.selected.add(p.id)); SFX.click(); saveStore(); renderPlayers(); };
+$('#selNone').onclick = () => { S.selected.clear(); SFX.click(); saveStore(); renderPlayers(); };
+$('#restore').onclick = restoreDefaults;
+$$('.mode').forEach(m => {
+  const set = () => { S.settings.mode = m.dataset.mode; SFX.click(); saveStore(); renderSettings(); };
+  m.onclick = set; m.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); set(); } };
+});
+$$('.seg').forEach(seg => seg.addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  const k = seg.dataset.setting; S.settings[k] = (k === 'diff') ? b.dataset.v : Number(b.dataset.v);
+  SFX.click(); saveStore(); renderSettings();
+}));
+$('#startBtn').onclick = startGame;
+$('#goStage').onclick = () => { SFX.click(); G.q = 0; G.stageCorrect = 0; nextTurn(); };
+$('#clrNext').onclick = afterClear;
+$('#openChest').onclick = openChest;
+$$('[data-quit]').forEach(b => b.onclick = openMenu);
+
+document.addEventListener('keydown', e => {
+  if(!G || !$('#screen-play').classList.contains('active') || $('.modal-bg')) return;
+  if(e.target.tagName === 'INPUT') return;
+  const map = {'1':0,'2':1,'3':2,'4':3};
+  if(!G.answered && G.cur.q.type === 'mc' && e.key in map){
+    const b = $$('#qcard .opt')[map[e.key]]; if(b && !b.disabled) b.click();
+  }
+});
+
+loadStore();
+updateSoundBtn();
+renderSettings();
+</script>
+</body>
+</html>
